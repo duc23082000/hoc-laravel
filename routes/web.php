@@ -5,6 +5,7 @@ use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\LostPasswordController;
 use App\Http\Controllers\Client\HomeController;
+use App\Http\Controllers\Client\CategoryController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Routing\RouteGroup;
 
@@ -47,6 +48,20 @@ Route::prefix('client')->middleware('auth')->group(function () {
     Route::get('change-passwordForm', [LoginController::class, 'changePasswordForm'])->name('change.password');
 
     Route::post('change-passwordForm', [LoginController::class, 'changePassword'])->name('change');
+
+    Route::prefix('categories')->group(function () {
+        Route::get('list', [CategoryController::class, 'list'])->name('categories.list');
+
+        Route::get('delete{id}', [CategoryController::class, 'delete'])->name('categories.delete');
+
+        Route::get('add', [CategoryController::class, 'formAdd'])->name('categories.add');
+
+        Route::post('add', [CategoryController::class, 'addData'])->name('addData');
+
+        Route::get('edit-id={id}', [CategoryController::class, 'formEdit'])->name('categories.edit');
+
+        Route::put('edit', [CategoryController::class, 'updateData'])->name('updateData');
+    });
 
 });
 

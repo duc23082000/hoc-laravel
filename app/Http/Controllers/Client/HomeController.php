@@ -15,7 +15,7 @@ class HomeController extends Controller
         // dd($username);
         // dd(request()->get('username'));
         // $username = 'duc';
-        $username = session('email');
-        return view('home', ['username'=>$username]);
+        $username = explode("@", session('email'))[0];
+        return view('client.web.home', ['username'=>$username]);
     }
 }

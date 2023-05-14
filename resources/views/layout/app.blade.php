@@ -11,23 +11,24 @@
     <title>Gentelella Alela!</title>
 
     <!-- Bootstrap -->
-    <link href="assets/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="{{ asset('assets/bootstrap/dist/css/bootstrap.min.css') }}" rel="stylesheet">
     <!-- Font Awesome -->
-    <link href="assets/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+    <link href="{{ asset('assets/font-awesome/css/font-awesome.min.css') }}" rel="stylesheet">
     <!-- NProgress -->
-    <link href="assets/nprogress/nprogress.css" rel="stylesheet">
+    <link href="{{ asset('assets/nprogress/nprogress.css') }}" rel="stylesheet">
     <!-- iCheck -->
-    <link href="assets/iCheck/skins/flat/green.css" rel="stylesheet">
+    <link href="{{ asset('assets/iCheck/skins/flat/green.css') }}" rel="stylesheet">
 	
     <!-- bootstrap-progressbar -->
-    <link href="assets/bootstrap-progressbar/css/bootstrap-progressbar-3.3.4.min.css" rel="stylesheet">
+    <link href="{{ asset('assets/bootstrap-progressbar/css/bootstrap-progressbar-3.3.4.min.css') }}" rel="stylesheet">
     <!-- JQVMap -->
-    <link href="assets/jqvmap/dist/jqvmap.min.css" rel="stylesheet"/>
+    <link href="{{ asset('assets/jqvmap/dist/jqvmap.min.css') }}" rel="stylesheet"/>
     <!-- bootstrap-daterangepicker -->
-    <link href="assets/bootstrap-daterangepicker/daterangepicker.css" rel="stylesheet">
+    <link href="{{ asset('assets/bootstrap-daterangepicker/daterangepicker.css') }}" rel="stylesheet">
 
     <!-- Custom Theme Style -->
-    <link href="build/css/custom.min.css" rel="stylesheet">
+    <link href="{{ asset('build/css/custom.min.css') }}" rel="stylesheet">
+    @yield('css')
   </head>
     <body class="nav-md">
       <div class="container body">
@@ -58,46 +59,47 @@
           </div>
         </div>
       </div>  
+    @yield('script')
     <!-- jQuery -->
-    <script src="assets/jquery/dist/jquery.min.js"></script>
+    <script src="{{ asset('assets/jquery/dist/jquery.min.js') }}"></script>
     <!-- Bootstrap -->
-    <script src="assets/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ asset('assets/bootstrap/dist/js/bootstrap.bundle.min.js') }}"></script>
     <!-- FastClick -->
-    <script src="assets/fastclick/lib/fastclick.js"></script>
+    <script src="{{ asset('assets/fastclick/lib/fastclick.js') }}"></script>
     <!-- NProgress -->
-    <script src="assets/nprogress/nprogress.js"></script>
+    <script src="{{ asset('assets/nprogress/nprogress.js') }}"></script>
     <!-- Chart.js -->
-    <script src="assets/Chart.js/dist/Chart.min.js"></script>
+    <script src="{{ asset('assets/Chart.js/dist/Chart.min.js') }}"></script>
     <!-- gauge.js -->
-    <script src="assets/gauge.js/dist/gauge.min.js"></script>
+    <script src="{{ asset('assets/gauge.js/dist/gauge.min.js') }}"></script>
     <!-- bootstrap-progressbar -->
-    <script src="assets/bootstrap-progressbar/bootstrap-progressbar.min.js"></script>
+    <script src="{{ asset('assets/bootstrap-progressbar/bootstrap-progressbar.min.js') }}"></script>
     <!-- iCheck -->
-    <script src="assets/iCheck/icheck.min.js"></script>
+    <script src="{{ asset('assets/iCheck/icheck.min.js') }}"></script>
     <!-- Skycons -->
-    <script src="assets/skycons/skycons.js"></script>
+    <script src="{{ asset('assets/skycons/skycons.js') }}"></script>
     <!-- Flot -->
-    <script src="assets/Flot/jquery.flot.js"></script>
-    <script src="assets/Flot/jquery.flot.pie.js"></script>
-    <script src="assets/Flot/jquery.flot.time.js"></script>
-    <script src="assets/Flot/jquery.flot.stack.js"></script>
-    <script src="assets/Flot/jquery.flot.resize.js"></script>
+    <script src="{{ asset('assets/Flot/jquery.flot.js') }}"></script>
+    <script src="{{ asset('assets/Flot/jquery.flot.pie.js') }}"></script>
+    <script src="{{ asset('assets/Flot/jquery.flot.time.js') }}"></script>
+    <script src="{{ asset('assets/Flot/jquery.flot.stack.js') }}"></script>
+    <script src="{{ asset('assets/Flot/jquery.flot.resize.js') }}"></script>
     <!-- Flot plugins -->
-    <script src="assets/flot.orderbars/js/jquery.flot.orderBars.js"></script>
-    <script src="assets/flot-spline/js/jquery.flot.spline.min.js"></script>
-    <script src="assets/flot.curvedlines/curvedLines.js"></script>
+    <script src="{{ asset('assets/flot.orderbars/js/jquery.flot.orderBars.js') }}"></script>
+    <script src="{{ asset('assets/flot-spline/js/jquery.flot.spline.min.js') }}"></script>
+    <script src="{{ asset('assets/flot.curvedlines/curvedLines.js') }}"></script>
     <!-- DateJS -->
-    <script src="assets/DateJS/build/date.js"></script>
+    <script src="{{ asset('assets/DateJS/build/date.js') }}"></script>
     <!-- JQVMap -->
-    <script src="assets/jqvmap/dist/jquery.vmap.js"></script>
-    <script src="assets/jqvmap/dist/maps/jquery.vmap.world.js"></script>
-    <script src="assets/jqvmap/examples/js/jquery.vmap.sampledata.js"></script>
+    <script src="{{ asset('assets/jqvmap/dist/jquery.vmap.js') }}"></script>
+    <script src="{{ asset('assets/jqvmap/dist/maps/jquery.vmap.world.js') }}"></script>
+    <script src="{{ asset('assets/jqvmap/examples/js/jquery.vmap.sampledata.js') }}"></script>
     <!-- bootstrap-daterangepicker -->
-    <script src="assets/moment/min/moment.min.js"></script>
-    <script src="assets/bootstrap-daterangepicker/daterangepicker.js"></script>
+    <script src="{{ asset('assets/moment/min/moment.min.js') }}"></script>
+    <script src="{{ asset('assets/bootstrap-daterangepicker/daterangepicker.js') }}"></script>
 
     <!-- Custom Theme Scripts -->
-    <script src="build/js/custom.min.js"></script>
+    <script src="{{ asset('build/js/custom.min.js') }}"></script>
 
     </body>
     </html>
