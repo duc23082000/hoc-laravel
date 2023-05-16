@@ -13,6 +13,8 @@ use Illuminate\Support\Facades\Password;
 use App\Models\ResetpassModel;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\AuthRequest;
+use App\Http\Requests\ChangePassRequest;
+use Illuminate\Support\Carbon;
 
 class LostPasswordController extends Controller
 {
@@ -23,6 +25,7 @@ class LostPasswordController extends Controller
     }
 
     public function addEmail(){
+        
         return view('client.auth.lostPassword');
     }
 
@@ -66,34 +69,28 @@ class LostPasswordController extends Controller
         
     }
 
-    public function resetPass(Request $request){
-        $request->validate([
-            'password' => 'required|string|min:6',
-        ], [
-            'password.required' => 'Vui lòng điền Mật khẩu',
-            'password.string' => 'Mật khẩu không được chứa các kí tự đặc biệt',
-            'password.min' => 'Mật khẩu phải có ít nhất 6 kí tự',
+    public function resetPass(ChangePassRequest $request){
 
-        ]);
         // dd('hello');
         $email = session('email');
         $token = session('token');
         // dd($email);
         if($request->password === $request->cfpassword){
-            $timenow = \Carbon\Carbon::now()->addHours(-1)->format('Y-m-d H:i:s');
+            $timenow = Carbon::now()->addHours(-1)->format('Y-m-d H:i:s');
             // dd($timenow);
             $created_at = ResetpassModel::select('created_at')
             ->where('email', $email)
-            ->get()
-            ->map(function ($item) {
-                return $item->created_at->format('Y-m-d H:i:s');
-            })
-            ->toArray();
+            ->get();
+            // ->map(function ($item) {
+            //     return $item->created_at->format('Y-m-d H:i:s');
+            // })
+            // ->toArray();
             
             // dd($created_at[0]);
             // $a = $timenow > $created_at[0] ? 'hello' : 'hi';
             // dd($a);
             if($timenow < $created_at[0]){
+
                 $password = Hash::make($request->password);
                 // dd($email);
                 

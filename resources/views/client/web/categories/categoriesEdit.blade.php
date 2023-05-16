@@ -7,7 +7,7 @@
             <label for="name">Name:</label>
             <input type="text" class="form-control"
             id="name" name="name"
-            value="{{ old('name') ?? $categoryEdit['name'] }}" placeholder="Name...">
+            value="@if(session('name')) {{ session('name') }}@else{{ old('name') ?? $categoryEdit['name'] }}@endif" placeholder="Name...">
         </div>
         @if (session('message2'))
           <p style="color: red">{{ session('message2') }}</p>
@@ -17,9 +17,9 @@
         @enderror
         <div class="form-group">
             <label for="order">Order:</label>
-            <input type="text" class="form-control" 
+            <input type="text" class="form-control"
             id="order" name="order"
-            value="{{ old('order') ?? $categoryEdit['order'] }}" placeholder="Order...">
+            value="@if(session('order')) {{ session('order') }}@else{{ old('order') ?? $categoryEdit['order'] }}@endif" placeholder="Order...">
         </div>
         @error('order')
             <p style="color: red">{{ $message }}</p>

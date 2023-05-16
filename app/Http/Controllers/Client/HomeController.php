@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class HomeController extends Controller
 {   
@@ -12,10 +13,7 @@ class HomeController extends Controller
     //     return redirect(route('home'));
     // }
     public function home(){
-        // dd($username);
-        // dd(request()->get('username'));
-        // $username = 'duc';
-        $username = explode("@", session('email'))[0];
-        return view('client.web.home', ['username'=>$username]);
+
+        return view('client.web.home');
     }
 }

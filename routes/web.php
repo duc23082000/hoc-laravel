@@ -5,7 +5,8 @@ use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\LostPasswordController;
 use App\Http\Controllers\Client\HomeController;
-use App\Http\Controllers\Client\CategoryController;
+use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\CourseController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Routing\RouteGroup;
 
@@ -61,6 +62,22 @@ Route::prefix('client')->middleware('auth')->group(function () {
         Route::get('edit-id={id}', [CategoryController::class, 'formEdit'])->name('categories.edit');
 
         Route::put('edit', [CategoryController::class, 'updateData'])->name('updateData');
+    });
+
+    Route::prefix('courses')->group(function () {
+        Route::get('list', [CourseController::class, 'list'])->name('courses.list');
+
+        Route::get('show/id={id}-category={category}', [CourseController::class, 'show'])->name('courses.show');
+
+        Route::get('delete{id}', [CourseController::class, 'delete'])->name('courses.delete');
+
+        Route::get('add', [CourseController::class, 'formAdd'])->name('courses.add');
+
+        Route::post('add', [CourseController::class, 'addData'])->name('courses.addData');
+
+        Route::get('edit-id={id}', [CourseController::class, 'formEdit'])->name('courses.edit');
+
+        Route::put('edit', [CourseController::class, 'updateData'])->name('course.update');
     });
 
 });

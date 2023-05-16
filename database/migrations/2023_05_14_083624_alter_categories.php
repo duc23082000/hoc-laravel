@@ -15,6 +15,7 @@ return new class extends Migration
     {
         Schema::table('categories', function (Blueprint $table) {
             $table->renameColumn('oder', 'order');
+            $table->dateTime('deleted_at')->softDeletes()->change();
          });
     }
 
@@ -25,8 +26,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('categories', function (Blueprint $table) {
-            $table->renameColumn('order', 'oder');
-         });
+
     }
 };

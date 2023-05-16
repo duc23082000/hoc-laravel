@@ -5,7 +5,8 @@ namespace Database\Seeders;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use App\Models\Categories;
+use App\Models\Category;
+use App\Models\Course;
 
 
 class DatabaseSeeder extends Seeder
@@ -17,10 +18,13 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        for($i=0; $i<50; $i++) {
-            Categories::create([
-                'name' => fake()->name(),
-                'order' => rand(1, 50),
+        for($i=0; $i<25; $i++) {
+            Course::create([
+                'course_name' => fake()->name(),
+                'price' => rand(1, 50),
+                'created_by_id' => 1,
+                'modified_by_id' => 1,
+                'category_id' => rand(1, 3),
             ]);
         }
     }

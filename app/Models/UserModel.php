@@ -8,8 +8,8 @@ use Illuminate\Support\Facades\Auth;
 
 class UserModel extends Model
 {
-    use HasFactory;
+    use HasFactory ;
     protected $table = 'users';
-    // const CREATED_AT = 'created_at';
-    // const UPDATED_AT = 'updated_date';
+    public $timestamps = true;
+    protected $fillable = ['email', 'password'];
 }

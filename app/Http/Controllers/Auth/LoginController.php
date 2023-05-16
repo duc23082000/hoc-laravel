@@ -3,12 +3,14 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Auth\LoginRequest;
 // Models 
 use App\Models\Users;
 use App\Models\UserModel;
 
 // Request
 use Illuminate\Http\Request;
+use App\Http\Requests\ChangePassRequest;
 // use App\Http\Requests\AuthRequest;
 
 // login logout 
@@ -54,14 +56,6 @@ class LoginController extends Controller
         }
     }
 
-    public function home(){
-        // dd($username);
-        $username = session('email');
-        // dd($username);
-        // $username = 'duc';
-        return view('home', ['username' => $username]);
-    }
-
     public function logout(Request $request): RedirectResponse
     {
         Auth::logout();
@@ -77,15 +71,7 @@ class LoginController extends Controller
         return view('client.auth.changePassword');
     }
 
-    public function changePassword(Request $request){
-        $request->validate([
-            'password' => 'required|string|min:6',
-        ], [
-            'password.required' => 'Vui lòng điền Mật khẩu',
-            'password.string' => 'Mật khẩu không được chứa các kí tự đặc biệt',
-            'password.min' => 'Mật khẩu phải có ít nhất 6 kí tự',
-
-        ]);
+    public function changePassword(ChangePassRequest $request){
 
         $email = session('email');
         // dd($email);
