@@ -15,11 +15,11 @@ return new class extends Migration
     {
         Schema::create('courses', function (Blueprint $table) {
             $table->id();
-            $table->string('course_name', 255)->unique();
+            $table->string('course_name', 255);
             $table->unsignedFloat('price');
             $table->text('description')->nullable();
             $table->unsignedBigInteger('category_id'); //Trường khóa ngoại
-            $table->string('image', 255)->unique()->nullable();
+            $table->string('image', 255)->nullable();
             $table->unsignedBigInteger('created_by_id'); //Trường khóa ngoại
             $table->unsignedBigInteger('modified_by_id'); //Trường khóa ngoại
             $table->timestamps();

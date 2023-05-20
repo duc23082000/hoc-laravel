@@ -23,39 +23,35 @@ use Illuminate\Support\Facades\Hash;
 
 class LoginController extends Controller
 {
-    private $user;
-    public function __construct()
-    {
-        $this->user = new Users;
-    }
+    // form đăng nhập 
     public function login() {
-        return view('client.auth.login');
+        return view('admin.auth.login');
     }
 
+    // xử lí đăng nhập 
     public function checkLogin(Request $request){
+        // lấy mật khẩu nhập vào 
         $passwordInput = $request->password;
         $email = $request->email;
+
+        // lấy mật khẩu trên sever  
         $password = collect(UserModel::select('password')->where('email', $email)->get())->toArray();
         // dd($password);
+
+        // kiểm tra mật khẩu
         $auth = [
             'email' => $email,
             'password' =>$passwordInput
         ];
         if(Auth::attempt($auth)){
-            $request->session()->put('email', $email);
-            // dd($email);
-            $arr = explode("@", $email);
-            // dd($arr[0]);
+
             return redirect(route('home'));
-            // return  redirect()->route('home', ['username' => $arr]);
-            // return view('home', [
-            //     'username' => $request['email']
-            // ]);
         } else {
             return redirect(route('login'))->with('message', 'Sai tên tài khoản hoặc mật khẩu')->with('email', $email);
         }
     }
-
+    
+    // xử lí đăng xuất 
     public function logout(Request $request): RedirectResponse
     {
         Auth::logout();
@@ -68,7 +64,7 @@ class LoginController extends Controller
     }
 
     public function changePasswordForm() {
-        return view('client.auth.changePassword');
+        return view('admin.auth.changePassword');
     }
 
     public function changePassword(ChangePassRequest $request){

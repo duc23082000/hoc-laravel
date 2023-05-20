@@ -18,24 +18,22 @@ use Illuminate\Support\Carbon;
 
 class LostPasswordController extends Controller
 {
-    private $user;
-    public function __construct()
-    {
-        $this->user = new Users;
-    }
-
+    //  form Gửi email để nhận link đổi mk
     public function addEmail(){
         
-        return view('client.auth.lostPassword');
+        return view('admin.auth.lostPassword');
     }
 
+    // Xử lí email đc gửi
     public function checkEmail(Request $request){
         $email = $request->email;
-        $check = collect(UserModel::where('email', $email)->get())->toArray();
-        // dd($check);
-        
 
+        // Kiểm tra xem email có tồn tại hay không 
+        $check = UserModel::where('email', $email)->get()->toArray();
+        // dd($check);
         if(!empty($check)){
+
+            // Tạo token và gửi link 
             // $token = Str::random(35);
             // // dd($token);
             // UserModel::where('email', $email)->update(['token'=> $token]);
@@ -50,7 +48,9 @@ class LostPasswordController extends Controller
         }
     }
 
+    // form đổi mk 
     public function formReset(Request $request, $email, $token) {
+        // check xem token link đã được tạo hay chưa
         $tokenCheck = collect(ResetpassModel::select('token')->where('email', $email)->get())->toArray();
         // dd($tokenCheck);
         // dd($token);
@@ -59,7 +59,7 @@ class LostPasswordController extends Controller
             $request->session()->put('token', $token);
 
             if(Hash::check($token, $tokenCheck[0]['token'])){
-                return view('client.auth.resetPassword')->with(['email'=>$email, 'token'=>$token]);
+                return view('admin.auth.resetPassword')->with(['email'=>$email, 'token'=>$token]);
             } else {
                 return 'sai trang';
             }
@@ -75,31 +75,31 @@ class LostPasswordController extends Controller
         $email = session('email');
         $token = session('token');
         // dd($email);
+
+        // Kiểm tra xem password và cfpassword có trùng hay không
         if($request->password === $request->cfpassword){
+            
             $timenow = Carbon::now()->addHours(-1)->format('Y-m-d H:i:s');
             // dd($timenow);
             $created_at = ResetpassModel::select('created_at')
             ->where('email', $email)
             ->get();
-            // ->map(function ($item) {
-            //     return $item->created_at->format('Y-m-d H:i:s');
-            // })
-            // ->toArray();
-            
-            // dd($created_at[0]);
-            // $a = $timenow > $created_at[0] ? 'hello' : 'hi';
-            // dd($a);
-            if($timenow < $created_at[0]){
 
+            // Kiểm tra xem link còn hạn hay không nếu còn thì đổi mật khẩu nếu hết hạn thì xóa link
+            if($timenow < $created_at[0]){
+                // băm password
                 $password = Hash::make($request->password);
                 // dd($email);
                 
+                // đổi password
                 $reset = UserModel::where('email', $email)->update(['password'=>$password]);
                 
+                // xóa link đổi mk  và quay lại trang đăng nhập
                 $deleteToken = ResetpassModel::where('email', $email)->delete();
                 // dd($deleteToken);
                 return redirect(route('login'))->with(['message2'=>'Đổi mật khẩu thành công!', 'email'=>$email]);
             } else {
+                // xóa link đổi mật khẩu và quay lại trang gửi mail
                 $deleteToken = ResetpassModel::where('email', $email)->delete();
                 return redirect(route('lostPass'))->with(['message'=>'Liên kết đã hết hạn xin vui lòng nhập lại Email để nhận liên kết mới', 'email'=>$email]);
             }

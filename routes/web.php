@@ -28,7 +28,7 @@ Route::prefix('user')->middleware('check.login')->group(function () {
 
     Route::get('/signup', [AuthController::class, 'signup'])->name('signup');
 
-    Route::post('signup', [AuthController::class, 'createPost']);
+    Route::post('signup', [AuthController::class, 'createPost'])->name('createAccount');
 
     Route::get('/lost-password', [LostPasswordController::class, 'addEmail'])->name('lostPass');
 
@@ -39,16 +39,14 @@ Route::prefix('user')->middleware('check.login')->group(function () {
     Route::post('reset-password', [LostPasswordController::class, 'resetPass'])->name('reset');
 });
 
-Route::prefix('client')->middleware('auth')->group(function () {
+Route::prefix('admin')->middleware('auth')->group(function () {
     Route::get('', [HomeController::class, 'home'])->name('home');
 
     Route::post('', [LoginController::class, 'logout'])->name('logout');
 
-    // Route::get('haha', [HomeController::class, 'index'])->name('index');
+    Route::get('change-password', [LoginController::class, 'changePasswordForm'])->name('change.password');
 
-    Route::get('change-passwordForm', [LoginController::class, 'changePasswordForm'])->name('change.password');
-
-    Route::post('change-passwordForm', [LoginController::class, 'changePassword'])->name('change');
+    Route::post('change-password', [LoginController::class, 'changePassword'])->name('change');
 
     Route::prefix('categories')->group(function () {
         Route::get('list', [CategoryController::class, 'list'])->name('categories.list');
@@ -67,7 +65,7 @@ Route::prefix('client')->middleware('auth')->group(function () {
     Route::prefix('courses')->group(function () {
         Route::get('list', [CourseController::class, 'list'])->name('courses.list');
 
-        Route::get('show/id={id}-category={category}', [CourseController::class, 'show'])->name('courses.show');
+        Route::get('show/id={id}', [CourseController::class, 'show'])->name('courses.show');
 
         Route::get('delete{id}', [CourseController::class, 'delete'])->name('courses.delete');
 

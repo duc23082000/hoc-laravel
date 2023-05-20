@@ -1,7 +1,7 @@
 @extends('layout.auth')
 
 @section('form')
-    <form action="" method="POST">
+    <form action="{{ route('createAccount') }}" method="POST">
         <h1>Create Account</h1>
         <div>
         <input type="text" class="form-control" 
@@ -10,6 +10,9 @@
         @error('email')
             <p style="color: red">{{ $message }}</p>
         @enderror
+        @if (session('message2'))
+            <p style="color: red">{{ session('message2') }}</p>
+        @endif
         </div>
         <div>
         <input type="password" class="form-control" 

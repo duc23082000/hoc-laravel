@@ -14,6 +14,6 @@ class HomeController extends Controller
     // }
     public function home(){
 
-        return view('client.web.home');
+        return view('admin.web.home');
     }
 }

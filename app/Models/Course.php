@@ -14,4 +14,16 @@ class Course extends Model
     public $timestamps = true;
     protected $fillable = ['course_name', 'price', 'description', 'image', 'created_by_id', 'modified_by_id'];
     protected $dates = ['deleted_at'];
+
+    public function categories() {
+        return $this->hasMany(Category::class);
+    }
+
+    public function users() {
+        return $this->hasMany(UserModel::class);
+    }
+
+    // public function users_update() {
+    //     return $this->hasMany(UserModel::class);
+    // }
 }

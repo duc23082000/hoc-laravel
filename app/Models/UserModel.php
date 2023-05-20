@@ -12,4 +12,9 @@ class UserModel extends Model
     protected $table = 'users';
     public $timestamps = true;
     protected $fillable = ['email', 'password'];
+
+    public function course() {
+        $this->belongsTo(Course::class);
+    }
+    
 }

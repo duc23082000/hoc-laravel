@@ -12,4 +12,8 @@ class Category extends Model
     public $timestamps = true;
     protected $fillable = ['name', 'oder'];
     protected $dates = ['deleted_at'];
+
+    public function course(){
+        return $this->belongsTo(Course::class);
+    }
 }

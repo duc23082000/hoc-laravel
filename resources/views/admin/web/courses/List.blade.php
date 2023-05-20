@@ -45,6 +45,7 @@
                     Id
                     <input type="hidden" name="sort" value="courses.id">
                     <input type="hidden" name="order" value="{{ $order ?? 'asc' }}">
+                    <input type="hidden" name="search" value="{{ $search }}">
                     <button class="button-sorf"><i class="fa fa-sort" aria-hidden="true"></i></button>
                 </form>
             </th>
@@ -53,6 +54,7 @@
                 Name
                 <input type="hidden" name="sort" value="courses.course_name">
                 <input type="hidden" name="order" value="{{ $order ?? 'asc' }}">
+                <input type="hidden" name="search" value="{{ $search }}">
                 <button class="button-sorf"><i class="fa fa-sort" aria-hidden="true"></i></button>
               </form>
             </th>
@@ -61,6 +63,7 @@
                 Price
                 <input type="hidden" name="sort" value="courses.price">
                 <input type="hidden" name="order" value="{{ $order ?? 'asc' }}">
+                <input type="hidden" name="search" value="{{ $search }}">
                 <button class="button-sorf"><i class="fa fa-sort" aria-hidden="true"></i></button>
               </form>
             </th>
@@ -69,6 +72,7 @@
                 Category
                 <input type="hidden" name="sort" value="categories.name">
                 <input type="hidden" name="order" value="{{ $order ?? 'asc' }}">
+                <input type="hidden" name="search" value="{{ $search }}">
                 <button class="button-sorf"><i class="fa fa-sort" aria-hidden="true"></i></button>
               </form>
             </th>
@@ -77,6 +81,7 @@
                 Created at
                 <input type="hidden" name="sort" value="courses.created_at">
                 <input type="hidden" name="order" value="{{ $order ?? 'asc' }}">
+                <input type="hidden" name="search" value="{{ $search }}">
                 <button class="button-sorf"><i class="fa fa-sort" aria-hidden="true"></i></button>
               </form>
             </th>
@@ -85,6 +90,7 @@
                 Modified at
                 <input type="hidden" name="sort" value="courses.updated_at">
                 <input type="hidden" name="order" value="{{ $order ?? 'asc' }}">
+                <input type="hidden" name="search" value="{{ $search }}">
                 <button class="button-sorf"><i class="fa fa-sort" aria-hidden="true"></i></button>
               </form>
             </th>
@@ -92,18 +98,32 @@
         </tr>
       </thead>
       <tbody>
-        @foreach ($dataJoin['data'] as $item)
+        @foreach ($dataJoin as $item)
             <tr>
-              <td>{{ $item->id }}</td>
-              <td>
-                <a href="{{ route('courses.show', ['id'=>$item->id, 'category'=>$item->name]) }}">
+              <td onclick="location.href='{{ route('courses.show', ['id'=>$item->id]) }}'"
+                  style="cursor: pointer;">
+                {{ $item->id }}
+              </td>
+              <td onclick="location.href='{{ route('courses.show', ['id'=>$item->id]) }}'"
+                  style="cursor: pointer;">
+                <a href="{{ route('courses.show', ['id'=>$item->id]) }}">
                   {{ $item->course_name }}
                 </a>
               </td>
-              <td>{{ $item->price }}$</td>
-              <td>{{ $item->name }}</td>
-              <td>{{ $item->created_at }}</td>
-              <td>{{ $item->updated_at }}</td>
+              <td onclick="location.href='{{ route('courses.show', ['id'=>$item->id]) }}'" 
+                  style="cursor: pointer;">
+                {{ $item->price }}$
+              </td>
+              <td onclick="location.href='{{ route('courses.show', ['id'=>$item->id]) }}'" 
+                  style="cursor: pointer;">
+                {{ $item->name }}
+              </td>
+              <td>
+                {{ $item->created_at }}
+              </td>
+              <td>
+                {{ $item->updated_at }}
+              </td>
               <td>
                 <a href="{{ route('courses.edit', ['id'=>$item->id]) }}"
                 class="btn btn-warning btn-sm">Sửa</a>

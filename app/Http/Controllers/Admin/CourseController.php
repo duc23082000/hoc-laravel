@@ -19,152 +19,238 @@ use Illuminate\Support\Facades\Auth;
 class CourseController extends Controller
 {
     public function list(Request $request) {
+        // thông tin tìm kiếm
         $search = $request->search;
-        $collum = $request->sort;
-        $order = $request->order;
 
+        // cột sắp xếp
+        $collum = $request->sort;
+
+        // phương thức săp xếp
+        $order = $request->order;
         // dd($search);
-        $joinResult = DB::table('courses')
-        ->join('categories', 'courses.category_id', '=', 'categories.id')
+
+        // Sử dụng Query Builder
+        // $joinResult = DB::table('courses')
+        // ->join('categories', 'courses.category_id', '=', 'categories.id')
+        // ->select('courses.id', 'courses.course_name', 'courses.price', 'courses.created_at', 'courses.updated_at', 'categories.name')
+        // ->where(function ($query) use ($search) {
+        //     $query->where('courses.id', $search)
+        //         ->orWhere('courses.course_name', 'LIKE', '%' . $search . '%')
+        //         ->orWhere('categories.name', 'LIKE', "%$search%");
+        // })
+        // ->whereNull('courses.deleted_at')
+        // ->orderBy($collum ?? 'courses.updated_at', $order ?? 'desc')
+        // ->paginate(20);
+        // $dataJoin = $joinResult->items();
+        // // dd($dataJoin[0]->id);
+        
+        // Sử dụng Eloquent
+        $joinResult = Course::join('categories', 'courses.category_id', '=', 'categories.id')
         ->select('courses.id', 'courses.course_name', 'courses.price', 'courses.created_at', 'courses.updated_at', 'categories.name')
-        ->where('courses.id', $search)
-        ->orwhere('courses.course_name', 'LIKE', '%'.$search.'%')
-        ->orWhere('categories.name', 'LIKE', "%$search%")
+        ->where(function ($query) use ($search) {
+            $query->where('courses.id', $search)
+                ->orWhere('courses.course_name', 'LIKE', '%' . $search . '%')
+                ->orWhere('categories.name', 'LIKE', "%$search%");
+        })
         ->orderBy($collum ?? 'courses.updated_at', $order ?? 'desc')
         ->paginate(20);
-        $dataJoin = collect($joinResult)->toArray();
-        // dd($dataJoin);
+
+        // Dữ liệu bảng 
+        // dd($joinResult->all());
+        $dataJoin = $joinResult->items();
         
+        // Đổi phương thức sắp xếp liên tục sau mỗi lần click sắp xếp
         $order = $order == 'asc' ? 'desc' : 'asc';
-        return view('client.web.courses.coursesList', compact('search', 'joinResult', 'dataJoin', 'order'));
+        return view('admin.web.courses.List', compact('search', 'joinResult', 'dataJoin', 'order'));
     }
 
-    public function show($id, $category){
-        $course = Course::find($id);
-        $image = $course->image;
-        $name = $course->course_name;
-        $price = $course->price;
-        $created = UserModel::find($course->created_by_id)->email;
-        $created_at = $course->created_at;
-        $modified = UserModel::find($course->modified_by_id)->email;
-        $updated_at = $course->updated_at;
-        $description = $course->description;
+    public function show($id){
+        // Join bảng để lấy dữ thông tin khóa học 
+        $joinCategories = Course::join('categories', 'courses.category_id', '=', 'categories.id')
+        ->where('courses.id', $id)->get();
+        // dd($joinCategories[0]->course_name);
 
-        // dd($description);
+        // Join bảng để lấy dữ thông tin người tạo khóa học 
+        $joinUserCreate = Course::join('users', 'courses.created_by_id', '=', 'users.id')
+        ->where('courses.id', $id)->get();
 
-        return view('client.web.courses.coursesShow',compact('category', 'image', 'name', 'price', 
-                                                            'created', 'created_at', 'modified', 'updated_at',
-                                                            'description'));
+        // Join bảng để lấy dữ thông tin người sửa khóa học 
+        $joinUserModify = Course::join('users', 'courses.created_by_id', '=', 'users.id')
+        ->where('courses.id', $id)->get();
+
+        return view('admin.web.courses.Show',compact('joinCategories', 'joinUserCreate', 'joinUserModify'));
     }
 
     public function delete($id){
-        $delete = Course::find($id);
-        $delete->delete();
+        // Chạy câu lệnh soft delete
+        $delete = Course::destroy($id);
+        // hoặc
+        // $delete = Course::find($id)->delete();
+
         // dd($delete);
         return redirect(route('courses.list'))->with('message', 'Xóa thành công');
     }
 
     public function formAdd(){
-        $categorylist = Category::pluck('name')->toArray();
-        // dd($categorylist);
-        return view('client.web.courses.coursesAdd', compact('categorylist'));
+        // Lấy ra danh sách category để điền vào thẻ select
+        $categorylist = Category::all();
+        // dd($categorylist[0]->id);
+
+        return view('admin.web.courses.Add', compact('categorylist'));
     }
 
     public function addData(CourseRequest $request){
         // dd('haha');
-        $select = Course::where('course_name', $request->name)->get()->toArray();
-        // dd($select);
-        if(empty($select)){
-            // dd(1);
-            $course = new Course();
+        // Tạo ra 1 khóa học mới 
+        $course = new Course();
+
+        // kiểm tra xem người dùng có gửi ảnh hay ko nếu có thì thêm ảnh ngược lại ảnh sẽ là null 
+        if (!empty($request->image)) {
+            $image = $request->image;
+
+            // Lấy ra định dạng của file 
+            $format = $image->getClientOriginalExtension();
+            // Lấy ra kích thước của file
+            $size = $image->getSize();
+
+            // Kiểm tra kiểu dữ liệu và kích thước file nếu là ảnh thì thực hiện lưu còn ko thì thoát
+            if (($format == 'jpg' || $format == 'png' || $format == 'gif') && $size < 26214400) {
+                // dd('haha');
+                $fileName = Str::random(40) . '.' . $image->getClientOriginalExtension();
+                // dd($fileName);
+                $path = $image->storeAs('images', $fileName, 'public');
+                $course->image = $fileName;
+                $course->course_name = $request->name;
+                $course->price = $request->price;
+                $course->category_id = $request->category;
+                $course->description = $request->description;
+                // dd(Auth::user()->id);
+                $course->created_by_id = Auth::user()->id;
+                $course->modified_by_id = Auth::user()->id;
+                $course->save();
+
+                return redirect(route('courses.list'))->with('message', 'Thêm khóa học thành công');
+            } else {
+                return back()->with(['message' => 'Ảnh phải có định dạng jpg, png, gif và phải có kích thước nhỏ hơn 25MB',
+                                    'name' => $request->name,
+                                    'price' => $request->price,
+                                    'description' => $request->description]);
+            }
+
+            
+        } else {
             $course->course_name = $request->name;
             $course->price = $request->price;
-            $course->category_id = Category::where('name', $request->category)->first()->id;
+            $course->category_id = $request->category;
             $course->description = $request->description;
             // dd(Auth::user()->id);
             $course->created_by_id = Auth::user()->id;
             $course->modified_by_id = Auth::user()->id;
             $course->save();
-            $id = Course::where('course_name', $request->name)->first()->id;
-
-            if(!empty($request->image)) {
-                $image = $request->image;
-                $fileName = Str::random(40) . '.' . $image->getClientOriginalExtension();
-                // dd($fileName);
-                $path = $image->storeAs('images', $fileName, 'public');
-                $courseUpdate = Course::find($id);
-                $courseUpdate->image = $fileName;
-                $courseUpdate->save();
-                return redirect(route('courses.list'))->with('message', 'Thêm khóa học thành công');
-            } else {
-                return redirect(route('courses.list'))->with('message', 'Thêm khóa học thành công');
-            }
-            
+            return redirect(route('courses.list'))->with('message', 'Thêm khóa học thành công');
         }
     }
+    
 
     public function formEdit($id, Request $request){
-        $categorylist = Category::pluck('name')->toArray();
+        // Lấy ra danh sách category để điền vào thẻ select
+        $categorylist = Category::all();
         // dd($categorylist);
-        $courseList = collect(Course::find($id))->toArray();
-        // dd($courseList);
+
+        // Lấy ra thông tin bản ghi course cần sửa
+        $courseList = Course::find($id);
+        // dd($courseList->category_id);
+
+        // tạo biến id session 
         $request->session()->put('id', $id);
+
+        // Kiểm tra xem id có tồn tại hay ko phòng trường hợp người dùng đổi id trên url
         if(!empty($courseList)){
-            $category = Category::find($courseList['category_id'])->name;
+            $category = Category::find($courseList->category_id)->name;
             // dd($category);
-            return view('client.web.courses.coursesEdit', compact('categorylist', 'courseList', 'category'));
+            return view('admin.web.courses.Edit', compact('categorylist', 'courseList', 'category'));
         } else {
             return back();
         }
     }
 
     public function updateData(CourseRequest $request){
+        // Láy ra id của course cần sửa thông biến session 
         $id = session('id');
         // dd($id);
-        $select =  collect(Course::where('course_name', $request->name)->where('id', '!=', $id)->get())->toArray();
-        // dd($select);
-        if(empty($select)) {
-            $course = Course::find($id);
+
+        // Tìm kiếm bản ghi cần sửa
+        $course = Course::find($id);
+
+        // kiểm tra xem người dùng có sửa ảnh hay không nếu có thì xóa ảnh cũ và thêm ảnh mới 
+        if (!empty($request->image)) {
+            $image = $request->image;
+
+            // Lấy ra định dạng của file 
+            $format = $image->getClientOriginalExtension();
+            // Lấy ra kích thước của file
+            $size = $image->getSize();
+
+            // Kiểm tra kiểu dữ liệu và kích thước file nếu là ảnh thì thực hiện lưu còn ko thì thoát
+            if (($format == 'jpg' || $format == 'png' || $format == 'gif') && $size < 26214400) {
+
+                $image_old = Course::find($id)->image;
+                // dd($image_old);
+
+                // Kiểm tra xem có ảnh cũ hay không nếu có thì xóa file cũ và thêm file mới còn không thì thêm luôn file mơis
+                if (!empty($image_old)) {
+                    // Xóa file cũ
+                    File::delete(storage_path('app/public/images/' . $image_old));
+
+                    // Đổi tên và lưu file mới
+                    $fileName = Str::random(40) . '.' . $image->getClientOriginalExtension();
+                    // dd($fileName);
+                    $path = $image->storeAs('images', $fileName, 'public');
+
+                    $course->image = $fileName;
+                    $course->course_name = $request->name;
+                    $course->price = $request->price;
+                    $course->category_id = $request->category;
+                    $course->description = $request->description;
+                    // dd(Auth::user()->id);
+                    $course->modified_by_id = Auth::user()->id;
+                    $course->save();
+
+                    return redirect(route('courses.list'))->with('message', 'Sửa khóa học thành công');
+                } else {
+                    // Đổi tên và lưu ảnh 
+                    $fileName = Str::random(40) . '.' . $image->getClientOriginalExtension();
+                    // dd($fileName);
+                    $path = $image->storeAs('images', $fileName, 'public');
+
+                    $course->image = $fileName;
+                    $course->course_name = $request->name;
+                    $course->price = $request->price;
+                    $course->category_id = $request->category;
+                    $course->description = $request->description;
+                    // dd(Auth::user()->id);
+                    $course->modified_by_id = Auth::user()->id;
+                    $course->save();
+
+                    return redirect(route('courses.list'))->with('message', 'Sửa khóa học thành công');
+                }
+
+            } else {
+                return back()->with(['message' => 'Ảnh phải có định dạng jpg, png, gif và phải có kích thước nhỏ hơn 25MB',
+                                    'name' => $request->name,
+                                    'price' => $request->price,
+                                    'description' => $request->description]);
+            }
+
+        } else {
             $course->course_name = $request->name;
             $course->price = $request->price;
-            $course->category_id = Category::where('name', $request->category)->first()->id;
+            $course->category_id = $request->category;
             $course->description = $request->description;
             // dd(Auth::user()->id);
             $course->modified_by_id = Auth::user()->id;
             $course->save();
-
-            if(!empty($request->image)) {
-                $image_old = Course::find($id)->image;
-                // dd($image_old);
-                if(!empty($image_old)){
-                    File::delete(storage_path('app/public/images/' . $image_old));
-                    // dd(1);
-                    $image = $request->image;
-                    $fileName = Str::random(40) . '.' . $image->getClientOriginalExtension();
-                    // dd($fileName);
-                    $path = $image->storeAs('images', $fileName, 'public');
-                    $courseUpdate = Course::find($id);
-                    $courseUpdate->image = $fileName;
-                    $courseUpdate->save();
-                    return redirect(route('courses.list'))->with('message', 'Sửa khóa học thành công');
-                } else {
-                    $image = $request->image;
-                    $fileName = Str::random(40) . '.' . $image->getClientOriginalExtension();
-                    // dd($fileName);
-                    $path = $image->storeAs('images', $fileName, 'public');
-                    $courseUpdate = Course::find($id);
-                    $courseUpdate->image = $fileName;
-                    $courseUpdate->save();
-                    return redirect(route('courses.list'))->with('message', 'Sửa khóa học thành công');
-                }
-            } else {
-                return redirect(route('courses.list'))->with('message', 'Sửa khóa học thành công');
-            }
-        } else {
-            return back()->with(['message2'=>'Tên Khóa học đã tồn tại',
-            'name'=>$request->name, 'price'=>$request->price, 'category'=>$request->category,
-            'description'=>$request->description]);
+            return redirect(route('courses.list'))->with('message', 'Sửa khóa học thành công');
         }
-        
     }
 }

@@ -1,18 +1,23 @@
 @extends('layout.app')
 
+@section('css')
+    <style>
+        img{
+            width: 200px;
+            height: auto;
+        }
+    </style>
+@endsection
 @section('content')
 <div class="right_col" role="main">
-    <form action="{{ route('courses.addData') }}" method="POST" enctype="multipart/form-data">
+    <form action="{{ route('course.update') }}" method="POST" enctype="multipart/form-data">
         {{-- Tên course  --}}
         <div class="form-group">
             <label for="name">Name:</label>
             <input type="text" class="form-control"
             id="name" name="name"
-            value="@if (session('name')) {{ session('name') }}@else{{ old('name') }}@endif" placeholder="Name...">
+            value="@if (session('name')) {{ session('name') }}@else{{ old('name') ?? $courseList->course_name }}@endif" placeholder="Name...">
         </div>
-        @if (session('message2'))
-          <p style="color: red">{{ session('message2') }}</p>
-        @endif
         @error('name')
             <p style="color: red">{{ $message }}</p>
         @enderror
@@ -22,7 +27,7 @@
             <label for="price">Price:</label>
             <input type="text" class="form-control"
             id="price" name="price"
-            value="@if (session('price')) {{ session('price') }}@else{{ old('price') }}@endif" placeholder="Price...">
+            value="@if (session('price')) {{ session('price') }}@else{{ old('price') ?? $courseList->price }}@endif" placeholder="Price...">
         </div>
         @error('price')
             <p style="color: red">{{ $message }}</p>
@@ -32,10 +37,12 @@
         <div class="form-floating" style="width: 30%;">
             <select class="form-select" aria-label="Floating label select example"
                     id="floatingSelect" name="category">
-              <option selected value="{{ old('category') ?? '' }}">{{ old('category') ?? 'Chọn dữ liệu' }}</option>
+                <option selected value="{{ old('category') ?? $courseList->category_id }}">
+                {{ old('category') ?? $category }}
+                </option>
             
               @foreach ($categorylist as $item)
-                <option value="{{ $item }}">{{ $item }}</option>
+                <option value="{{ $item->id }}">{{ $item->name }}</option>
               @endforeach
 
             </select>
@@ -47,16 +54,23 @@
 
         {{-- Nội dung khóa học  --}}
         <label for="description">Description:</label>
-	    <textarea id="description" name="description" rows="10">{{ old('description') }}</textarea>
+	    <textarea id="description" name="description" rows="10">@if (session('description')) {{ session('description') }}@else{{ old('description') ?? $courseList->description }}@endif</textarea>
 
         {{-- Ảnh course  --}}
         <div class="mb-3">
             <label for="image">Image:</label>
-            <input class="form-control form-control-sm" type="file" name="image" id="image">
+            <input class="form-control form-control-sm" style="width: 30%"
+            type="file" name="image" id="image">
+            <img src="{{ asset('storage/images/' . $courseList->image) }}" alt="Chưa cập nhật ảnh">
         </div>
+        @if (session('message'))
+          <p style="color: red">{{ session('message') }}</p>
+        @endif
 
+        {{-- Submit dữ liệu  --}}
         @csrf
-        <button type="submit" class="btn btn-primary">Thêm</button>
+        @method('PUT')
+        <button type="submit" class="btn btn-primary">Sửa</button>
         <a href="{{ route('courses.list') }}" class="btn btn-secondary">Thoát</a>
     </form>
 </div>
