@@ -10,7 +10,7 @@ use App\Http\Requests\AuthRequest;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 
-class AuthController extends Controller
+class CreateAccountController extends Controller
 {
 
 
@@ -19,7 +19,7 @@ class AuthController extends Controller
         return view('admin.auth.signup');
     }
 
-    // sử lí đăng kí tài khoản 
+    // xử lí đăng kí tài khoản 
     public function createPost(AuthRequest $request){
 
         $email = $request->email;

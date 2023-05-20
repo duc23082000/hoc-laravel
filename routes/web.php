@@ -1,12 +1,13 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\Auth\CreateAccountController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\LostPasswordController;
 use App\Http\Controllers\Client\HomeController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\CourseController;
+use App\Http\Controllers\Admin\Course2Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Routing\RouteGroup;
 
@@ -26,9 +27,9 @@ Route::prefix('user')->middleware('check.login')->group(function () {
 
     Route::post('login', [LoginController::class, 'checkLogin'])->name('checkLogin');
 
-    Route::get('/signup', [AuthController::class, 'signup'])->name('signup');
+    Route::get('/signup', [CreateAccountController::class, 'signup'])->name('signup');
 
-    Route::post('signup', [AuthController::class, 'createPost'])->name('createAccount');
+    Route::post('signup', [CreateAccountController::class, 'createPost'])->name('createAccount');
 
     Route::get('/lost-password', [LostPasswordController::class, 'addEmail'])->name('lostPass');
 
@@ -63,19 +64,19 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     });
 
     Route::prefix('courses')->group(function () {
-        Route::get('list', [CourseController::class, 'list'])->name('courses.list');
+        Route::get('list', [Course2Controller::class, 'list'])->name('courses.list');
 
-        Route::get('show/id={id}', [CourseController::class, 'show'])->name('courses.show');
+        Route::get('show/id={id}', [Course2Controller::class, 'show'])->name('courses.show');
 
-        Route::get('delete{id}', [CourseController::class, 'delete'])->name('courses.delete');
+        Route::get('delete{id}', [Course2Controller::class, 'delete'])->name('courses.delete');
 
-        Route::get('add', [CourseController::class, 'formAdd'])->name('courses.add');
+        Route::get('add', [Course2Controller::class, 'formAdd'])->name('courses.add');
 
-        Route::post('add', [CourseController::class, 'addData'])->name('courses.addData');
+        Route::post('add', [Course2Controller::class, 'addData'])->name('courses.addData');
 
-        Route::get('edit-id={id}', [CourseController::class, 'formEdit'])->name('courses.edit');
+        Route::get('edit-id={id}', [Course2Controller::class, 'formEdit'])->name('courses.edit');
 
-        Route::put('edit', [CourseController::class, 'updateData'])->name('course.update');
+        Route::put('edit', [Course2Controller::class, 'updateData'])->name('course.update');
     });
 
 });
@@ -90,9 +91,7 @@ Route::prefix('admin')->middleware('auth')->group(function () {
 Route::get('test', [AuthController::class, 'test']);
 
 Route::get('test2', function(){
-    $mytime = Carbon\Carbon::now()->format('Y-m-d H:i:s');
-    dd($mytime);
-    // return $id;
+    return view('mail.forgotPass');
 });
 
 

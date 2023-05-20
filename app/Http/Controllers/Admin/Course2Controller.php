@@ -10,13 +10,9 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\File;
-
-use App\Models\Category;
-use App\Models\UserModel;
-use App\Models\Course;
 use Illuminate\Support\Facades\Auth;
 
-class CourseController extends Controller
+class Course2Controller extends Controller
 {
     public function list(Request $request) {
         // thông tin tìm kiếm
@@ -30,34 +26,23 @@ class CourseController extends Controller
         // dd($search);
 
         // Sử dụng Query Builder
-        // $joinResult = DB::table('courses')
-        // ->join('categories', 'courses.category_id', '=', 'categories.id')
-        // ->select('courses.id', 'courses.course_name', 'courses.price', 'courses.created_at', 'courses.updated_at', 'categories.name')
-        // ->where(function ($query) use ($search) {
-        //     $query->where('courses.id', $search)
-        //         ->orWhere('courses.course_name', 'LIKE', '%' . $search . '%')
-        //         ->orWhere('categories.name', 'LIKE', "%$search%");
-        // })
-        // ->whereNull('courses.deleted_at')
-        // ->orderBy($collum ?? 'courses.updated_at', $order ?? 'desc')
-        // ->paginate(20);
-        // $dataJoin = $joinResult->items();
-        // // dd($dataJoin[0]->id);
-        
-        // Sử dụng Eloquent
-        $joinResult = Course::join('categories', 'courses.category_id', '=', 'categories.id')
+        $joinResult = DB::table('courses')
+        ->join('categories', 'courses.category_id', '=', 'categories.id')
         ->select('courses.id', 'courses.course_name', 'courses.price', 'courses.created_at', 'courses.updated_at', 'categories.name')
         ->where(function ($query) use ($search) {
             $query->where('courses.id', $search)
                 ->orWhere('courses.course_name', 'LIKE', '%' . $search . '%')
                 ->orWhere('categories.name', 'LIKE', "%$search%");
         })
+        ->whereNull('courses.deleted_at')
         ->orderBy($collum ?? 'courses.updated_at', $order ?? 'desc')
         ->paginate(20);
+        
 
         // Dữ liệu bảng 
         // dd($joinResult->all());
         $dataJoin = $joinResult->items();
+        // dd($dataJoin[0]->id);
         
         // Đổi phương thức sắp xếp liên tục sau mỗi lần click sắp xếp
         $order = $order == 'asc' ? 'desc' : 'asc';
@@ -65,27 +50,35 @@ class CourseController extends Controller
     }
 
     public function show($id){
-        // Join bảng để lấy dữ thông tin khóa học 
-        $joinCategories = Course::join('categories', 'courses.category_id', '=', 'categories.id')
-        ->where('courses.id', $id)->get();
-        // dd($joinCategories[0]->course_name);
+        // Join bảng để lấy dữ liệu thông tin khóa học
+        $joinCategories = DB::table('courses')
+        ->join('categories', 'courses.category_id', '=', 'categories.id')
+        ->where('courses.id', $id)
+        ->whereNull('courses.deleted_at')->get();
+        // dd($joinCategories);
 
         // Join bảng để lấy dữ thông tin người tạo khóa học 
-        $joinUserCreate = Course::join('users', 'courses.created_by_id', '=', 'users.id')
-        ->where('courses.id', $id)->get();
+        $joinUserCreate = DB::table('courses')
+        ->join('users', 'courses.created_by_id', '=', 'users.id')
+        ->where('courses.id', $id)
+        ->whereNull('courses.deleted_at')->get();
 
         // Join bảng để lấy dữ thông tin người sửa khóa học 
-        $joinUserModify = Course::join('users', 'courses.created_by_id', '=', 'users.id')
-        ->where('courses.id', $id)->get();
+        $joinUserModify = DB::table('courses')
+        ->join('users', 'courses.modified_by_id', '=', 'users.id')
+        ->where('courses.id', $id)
+        ->whereNull('courses.deleted_at')->get();
 
         return view('admin.web.courses.Show',compact('joinCategories', 'joinUserCreate', 'joinUserModify'));
     }
 
     public function delete($id){
-        // Chạy câu lệnh soft delete
-        $delete = Course::destroy($id);
-        // hoặc
-        // $delete = Course::find($id)->delete();
+        // Add deleted_at = now
+        $delete = DB::table('courses')->where('id', $id)
+        ->update([
+            'deleted_at'=>now()->format('Y-m-d H:i:s'), 
+            'updated_at' => now()->format('Y-m-d H:i:s')
+        ]);
 
         // dd($delete);
         return redirect(route('courses.list'))->with('message', 'Xóa thành công');
@@ -93,14 +86,14 @@ class CourseController extends Controller
 
     public function formAdd(){
         // Lấy ra danh sách category để điền vào thẻ select
-        $categorylist = Category::all();
+        $categorylist = DB::table('categories')
+        ->whereNull('deleted_at')->get();
         // dd($categorylist[0]->id);
 
         return view('admin.web.courses.Add', compact('categorylist'));
     }
 
     public function addData(CourseRequest $request){
-        // dd('haha');
 
         // kiểm tra xem người dùng có gửi ảnh hay ko nếu có thì thêm ảnh ngược lại ảnh sẽ là null 
         if (!empty($request->image)) {
@@ -117,17 +110,18 @@ class CourseController extends Controller
                 $fileName = Str::random(40) . '.' . $image->getClientOriginalExtension();
                 // dd($fileName);
                 $path = $image->storeAs('images', $fileName, 'public');
-                // Tạo ra 1 khóa học mới 
-                $course = new Course();
-                $course->image = $fileName;
-                $course->course_name = $request->name;
-                $course->price = $request->price;
-                $course->category_id = $request->category;
-                $course->description = $request->description;
-                // dd(Auth::user()->id);
-                $course->created_by_id = Auth::user()->id;
-                $course->modified_by_id = Auth::user()->id;
-                $course->save();
+                $create = DB::table('courses')
+                ->insert([
+                    'course_name' => $request->name,
+                    'price' => $request->price,
+                    'category_id' => $request->category,
+                    'description' => $request->description,
+                    'image' => $fileName,
+                    'created_by_id' => Auth::user()->id,
+                    'modified_by_id' => Auth::user()->id,
+                    'created_at' => now()->format('Y-m-d H:i:s'),
+                    'updated_at' => now()->format('Y-m-d H:i:s')
+                ]);
 
                 return redirect(route('courses.list'))->with('message', 'Thêm khóa học thành công');
             } else {
@@ -139,28 +133,32 @@ class CourseController extends Controller
 
             
         } else {
-            // Tạo ra 1 khóa học mới 
-            $course = new Course();
-            $course->course_name = $request->name;
-            $course->price = $request->price;
-            $course->category_id = $request->category;
-            $course->description = $request->description;
-            // dd(Auth::user()->id);
-            $course->created_by_id = Auth::user()->id;
-            $course->modified_by_id = Auth::user()->id;
-            $course->save();
+            $create = DB::table('courses')
+            ->insert([
+                'course_name' => $request->name,
+                'price' => $request->price,
+                'category_id' => $request->category,
+                'description' => $request->description,
+                'created_by_id' => Auth::user()->id,
+                'modified_by_id' => Auth::user()->id,
+                'created_at' => now()->format('Y-m-d H:i:s'),
+                'updated_at' => now()->format('Y-m-d H:i:s')
+            ]);
             return redirect(route('courses.list'))->with('message', 'Thêm khóa học thành công');
         }
     }
-    
 
     public function formEdit($id, Request $request){
         // Lấy ra danh sách category để điền vào thẻ select
-        $categorylist = Category::all();
+        $categorylist = DB::table('categories')
+        ->whereNull('deleted_at')->get();
         // dd($categorylist);
 
         // Lấy ra thông tin bản ghi course cần sửa
-        $courseList = Course::find($id);
+        $courseList = DB::table('courses')
+        ->where('id', $id)
+        ->whereNull('deleted_at')
+        ->first();
         // dd($courseList->category_id);
 
         // tạo biến id session 
@@ -168,7 +166,8 @@ class CourseController extends Controller
 
         // Kiểm tra xem id có tồn tại hay ko phòng trường hợp người dùng đổi id trên url
         if(!empty($courseList)){
-            $category = Category::find($courseList->category_id)->name;
+            $category = DB::table('categories')
+            ->where('id', $courseList->category_id)->first()->name;
             // dd($category);
             return view('admin.web.courses.Edit', compact('categorylist', 'courseList', 'category'));
         } else {
@@ -180,9 +179,6 @@ class CourseController extends Controller
         // Láy ra id của course cần sửa thông biến session 
         $id = session('id');
         // dd($id);
-
-        // Tìm kiếm bản ghi cần sửa
-        $course = Course::find($id);
 
         // kiểm tra xem người dùng có sửa ảnh hay không nếu có thì xóa ảnh cũ và thêm ảnh mới 
         if (!empty($request->image)) {
@@ -196,7 +192,8 @@ class CourseController extends Controller
             // Kiểm tra kiểu dữ liệu và kích thước file nếu là ảnh thì thực hiện lưu còn ko thì thoát
             if (($format == 'jpg' || $format == 'png' || $format == 'gif') && $size < 26214400) {
 
-                $image_old = Course::find($id)->image;
+                $image_old = DB::table('courses')
+                ->where('id', $id)->first()->image;
                 // dd($image_old);
 
                 // Kiểm tra xem có ảnh cũ hay không nếu có thì xóa file cũ và thêm file mới còn không thì thêm luôn file mơis
@@ -209,14 +206,19 @@ class CourseController extends Controller
                     // dd($fileName);
                     $path = $image->storeAs('images', $fileName, 'public');
 
-                    $course->image = $fileName;
-                    $course->course_name = $request->name;
-                    $course->price = $request->price;
-                    $course->category_id = $request->category;
-                    $course->description = $request->description;
-                    // dd(Auth::user()->id);
-                    $course->modified_by_id = Auth::user()->id;
-                    $course->save();
+                    // Sửa dữ liệu
+                    $create = DB::table('courses')
+                    ->where('id', $id)
+                    ->update([
+                        'course_name' => $request->name,
+                        'price' => $request->price,
+                        'category_id' => $request->category,
+                        'description' => $request->description,
+                        'image' => $fileName,
+                        'created_by_id' => Auth::user()->id,
+                        'modified_by_id' => Auth::user()->id,
+                        'updated_at' => now()->format('Y-m-d H:i:s')
+                    ]);
 
                     return redirect(route('courses.list'))->with('message', 'Sửa khóa học thành công');
                 } else {
@@ -225,15 +227,19 @@ class CourseController extends Controller
                     // dd($fileName);
                     $path = $image->storeAs('images', $fileName, 'public');
 
-                    $course->image = $fileName;
-                    $course->course_name = $request->name;
-                    $course->price = $request->price;
-                    $course->category_id = $request->category;
-                    $course->description = $request->description;
-                    // dd(Auth::user()->id);
-                    $course->modified_by_id = Auth::user()->id;
-                    $course->save();
-
+                    // Sửa dữ liệu
+                    $create = DB::table('courses')
+                    ->where('id', $id)
+                    ->update([
+                        'course_name' => $request->name,
+                        'price' => $request->price,
+                        'category_id' => $request->category,
+                        'description' => $request->description,
+                        'image' => $fileName,
+                        'created_by_id' => Auth::user()->id,
+                        'modified_by_id' => Auth::user()->id,
+                        'updated_at' => now()->format('Y-m-d H:i:s')
+                    ]);
                     return redirect(route('courses.list'))->with('message', 'Sửa khóa học thành công');
                 }
 
@@ -245,13 +251,18 @@ class CourseController extends Controller
             }
 
         } else {
-            $course->course_name = $request->name;
-            $course->price = $request->price;
-            $course->category_id = $request->category;
-            $course->description = $request->description;
-            // dd(Auth::user()->id);
-            $course->modified_by_id = Auth::user()->id;
-            $course->save();
+            // Sửa dữ liệu
+            $create = DB::table('courses')
+            ->where('id', $id)
+            ->update([
+                'course_name' => $request->name,
+                'price' => $request->price,
+                'category_id' => $request->category,
+                'description' => $request->description,
+                'created_by_id' => Auth::user()->id,
+                'modified_by_id' => Auth::user()->id,
+                'updated_at' => now()->format('Y-m-d H:i:s')
+            ]);
             return redirect(route('courses.list'))->with('message', 'Sửa khóa học thành công');
         }
     }
