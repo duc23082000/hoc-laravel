@@ -16,7 +16,7 @@
             <label for="name">Name:</label>
             <input type="text" class="form-control"
             id="name" name="name"
-            value="@if (session('name')) {{ session('name') }}@else{{ old('name') ?? $courseList->course_name }}@endif" placeholder="Name...">
+            value="@if (session('name')) {{ session('name') }}@else{{ old('name') ?? $course->course_name }}@endif" placeholder="Name...">
         </div>
         @error('name')
             <p style="color: red">{{ $message }}</p>
@@ -27,7 +27,7 @@
             <label for="price">Price:</label>
             <input type="text" class="form-control"
             id="price" name="price"
-            value="@if (session('price')) {{ session('price') }}@else{{ old('price') ?? $courseList->price }}@endif" placeholder="Price...">
+            value="@if (session('price')) {{ session('price') }}@else{{ old('price') ?? $course->price }}@endif" placeholder="Price...">
         </div>
         @error('price')
             <p style="color: red">{{ $message }}</p>
@@ -37,8 +37,8 @@
         <div class="form-floating" style="width: 30%;">
             <select class="form-select" aria-label="Floating label select example"
                     id="floatingSelect" name="category">
-                <option selected value="{{ old('category') ?? $courseList->category_id }}">
-                {{ old('category') ?? $category }}
+                <option selected value="{{ old('category') ?? $course->category_id }}">
+                {{ old('category') ?? $course->category->name }}
                 </option>
             
               @foreach ($categorylist as $item)
@@ -54,14 +54,14 @@
 
         {{-- Nội dung khóa học  --}}
         <label for="description">Description:</label>
-	    <textarea id="description" name="description" rows="10">@if (session('description')) {{ session('description') }}@else{{ old('description') ?? $courseList->description }}@endif</textarea>
+	    <textarea id="description" name="description" rows="10">@if (session('description')) {{ session('description') }}@else{{ old('description') ?? $course->description }}@endif</textarea>
 
         {{-- Ảnh course  --}}
         <div class="mb-3">
             <label for="image">Image:</label>
             <input class="form-control form-control-sm" style="width: 30%"
             type="file" name="image" id="image">
-            <img src="{{ asset('storage/images/' . $courseList->image) }}" alt="Chưa cập nhật ảnh">
+            <img src="{{ asset('storage/images/' . $course->image) }}" alt="Chưa cập nhật ảnh">
         </div>
         @if (session('message'))
           <p style="color: red">{{ session('message') }}</p>
@@ -70,7 +70,7 @@
         {{-- Submit dữ liệu  --}}
         @csrf
         @method('PUT')
-        <button type="submit" class="btn btn-primary">Sửa</button>
+        <button type="submit" class="btn btn-primary">Update</button>
         <a href="{{ route('courses.list') }}" class="btn btn-secondary">Thoát</a>
     </form>
 </div>

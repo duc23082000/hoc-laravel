@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Log;
 
 use App\Models\Category;
 use App\Models\UserModel;
@@ -28,21 +29,6 @@ class CourseController extends Controller
         // phương thức săp xếp
         $order = $request->order;
         // dd($search);
-
-        // Sử dụng Query Builder
-        // $joinResult = DB::table('courses')
-        // ->join('categories', 'courses.category_id', '=', 'categories.id')
-        // ->select('courses.id', 'courses.course_name', 'courses.price', 'courses.created_at', 'courses.updated_at', 'categories.name')
-        // ->where(function ($query) use ($search) {
-        //     $query->where('courses.id', $search)
-        //         ->orWhere('courses.course_name', 'LIKE', '%' . $search . '%')
-        //         ->orWhere('categories.name', 'LIKE', "%$search%");
-        // })
-        // ->whereNull('courses.deleted_at')
-        // ->orderBy($collum ?? 'courses.updated_at', $order ?? 'desc')
-        // ->paginate(20);
-        // $dataJoin = $joinResult->items();
-        // // dd($dataJoin[0]->id);
         
         // Sử dụng Eloquent
         $joinResult = Course::join('categories', 'courses.category_id', '=', 'categories.id')
@@ -55,9 +41,11 @@ class CourseController extends Controller
         ->orderBy($collum ?? 'courses.updated_at', $order ?? 'desc')
         ->paginate(20);
 
-        // Dữ liệu bảng 
-        // dd($joinResult->all());
+        // Dữ liệu bảng
+        // dd($joinResult);
         $dataJoin = $joinResult->items();
+        // dd($dataJoin);
+        Log::info($dataJoin);
         
         // Đổi phương thức sắp xếp liên tục sau mỗi lần click sắp xếp
         $order = $order == 'asc' ? 'desc' : 'asc';
@@ -65,20 +53,10 @@ class CourseController extends Controller
     }
 
     public function show($id){
-        // Join bảng để lấy dữ thông tin khóa học 
-        $joinCategories = Course::join('categories', 'courses.category_id', '=', 'categories.id')
-        ->where('courses.id', $id)->get();
-        // dd($joinCategories[0]->course_name);
+        // Lấy ra dữ liệu khóa học
+        $data = Course::find($id);
 
-        // Join bảng để lấy dữ thông tin người tạo khóa học 
-        $joinUserCreate = Course::join('users', 'courses.created_by_id', '=', 'users.id')
-        ->where('courses.id', $id)->get();
-
-        // Join bảng để lấy dữ thông tin người sửa khóa học 
-        $joinUserModify = Course::join('users', 'courses.created_by_id', '=', 'users.id')
-        ->where('courses.id', $id)->get();
-
-        return view('admin.web.courses.Show',compact('joinCategories', 'joinUserCreate', 'joinUserModify'));
+        return view('admin.web.courses.Show',compact('data'));
     }
 
     public function delete($id){
@@ -106,7 +84,7 @@ class CourseController extends Controller
         if (!empty($request->image)) {
             $image = $request->image;
 
-            // Lấy ra định dạng của file 
+            // Lấy ra định dạng của file
             $format = $image->getClientOriginalExtension();
             // Lấy ra kích thước của file
             $size = $image->getSize();
@@ -160,17 +138,15 @@ class CourseController extends Controller
         // dd($categorylist);
 
         // Lấy ra thông tin bản ghi course cần sửa
-        $courseList = Course::find($id);
-        // dd($courseList->category_id);
+        $course = Course::find($id);
+        // dd($course->category->name);
 
         // tạo biến id session 
         $request->session()->put('id', $id);
 
         // Kiểm tra xem id có tồn tại hay ko phòng trường hợp người dùng đổi id trên url
-        if(!empty($courseList)){
-            $category = Category::find($courseList->category_id)->name;
-            // dd($category);
-            return view('admin.web.courses.Edit', compact('categorylist', 'courseList', 'category'));
+        if(!empty($course)){
+            return view('admin.web.courses.Edit', compact('categorylist', 'course'));
         } else {
             return back();
         }

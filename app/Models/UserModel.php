@@ -13,8 +13,8 @@ class UserModel extends Model
     public $timestamps = true;
     protected $fillable = ['email', 'password'];
 
-    public function course() {
-        $this->belongsTo(Course::class);
+    public function courses_created_by() {
+        $this->hasMany(Course::class, 'created_by_id', 'id');
     }
     
 }

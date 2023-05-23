@@ -32,6 +32,7 @@
   </form>
 
   <a href="{{ route('courses.add') }}" class="btn btn-outline-success">Thêm</a>
+  <a href="{{ route('export') }}" class="btn btn-outline-success">Export excel</a>
   
   @if (session('message'))
       <p class="alert alert-primary" style="text-align: center">{{ session('message') }}</p>
