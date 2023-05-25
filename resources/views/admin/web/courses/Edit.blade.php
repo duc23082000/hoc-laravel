@@ -10,13 +10,13 @@
 @endsection
 @section('content')
 <div class="right_col" role="main">
-    <form action="{{ route('course.update') }}" method="POST" enctype="multipart/form-data">
+    <form action="" method="POST" enctype="multipart/form-data">
         {{-- Tên course  --}}
         <div class="form-group">
             <label for="name">Name:</label>
             <input type="text" class="form-control"
             id="name" name="name"
-            value="@if (session('name')) {{ session('name') }}@else{{ old('name') ?? $course->course_name }}@endif" placeholder="Name...">
+            value="{{ old('name') ?? $course->course_name }}" placeholder="Name...">
         </div>
         @error('name')
             <p style="color: red">{{ $message }}</p>
@@ -27,7 +27,7 @@
             <label for="price">Price:</label>
             <input type="text" class="form-control"
             id="price" name="price"
-            value="@if (session('price')) {{ session('price') }}@else{{ old('price') ?? $course->price }}@endif" placeholder="Price...">
+            value="{{ old('price') ?? $course->price }}" placeholder="Price...">
         </div>
         @error('price')
             <p style="color: red">{{ $message }}</p>
@@ -37,8 +37,8 @@
         <div class="form-floating" style="width: 30%;">
             <select class="form-select" aria-label="Floating label select example"
                     id="floatingSelect" name="category">
-                <option selected value="{{ old('category') ?? $course->category_id }}">
-                {{ old('category') ?? $course->category->name }}
+                <option selected value="{{ $course->category_id }}">
+                {{ $course->category->name }}
                 </option>
             
               @foreach ($categorylist as $item)
@@ -54,7 +54,7 @@
 
         {{-- Nội dung khóa học  --}}
         <label for="description">Description:</label>
-	    <textarea id="description" name="description" rows="10">@if (session('description')) {{ session('description') }}@else{{ old('description') ?? $course->description }}@endif</textarea>
+	    <textarea id="description" name="description" rows="10">{{ old('description') ?? $course->description }}</textarea>
 
         {{-- Ảnh course  --}}
         <div class="mb-3">

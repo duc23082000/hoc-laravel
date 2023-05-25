@@ -15,10 +15,12 @@ class Course extends Model
     public $timestamps = true;
     protected $fillable = ['course_name', 'price', 'description', 'image', 'created_by_id', 'modified_by_id'];
     protected $dates = ['deleted_at'];
-    protected $qualifyColumnNames = true;
+    
+    protected $attribute = ['fee_type'];
 
     public function category() {
-        return $this->belongsTo(Category::class, 'category_id', 'id');
+        return $this->belongsTo(Category::class, 'category_id', 'id')->select('id', 'name');
+        
     }
 
     public function user_create() {
@@ -27,5 +29,10 @@ class Course extends Model
 
     public function user_update() {
         return $this->belongsTo(UserModel::class, 'modified_by_id', 'id');
+    }
+
+    public function getFeeTypeAttribute()
+    {
+        return $this->price == 0 ? 'Miễn phí' : 'Trả phí';
     }
 }

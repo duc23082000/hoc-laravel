@@ -59,15 +59,15 @@ Route::prefix('admin')->middleware('auth')->group(function () {
 
         Route::post('add', [CategoryController::class, 'addData'])->name('addData');
 
-        Route::get('edit-id={id}', [CategoryController::class, 'formEdit'])->name('categories.edit');
+        Route::get('edit/{id}', [CategoryController::class, 'formEdit'])->name('categories.edit');
 
-        Route::put('edit', [CategoryController::class, 'updateData'])->name('updateData');
+        Route::put('edit/{id}', [CategoryController::class, 'updateData'])->name('updateData');
     });
 
     Route::prefix('courses')->group(function () {
         Route::get('list', [CourseController::class, 'list'])->name('courses.list');
 
-        Route::get('show/id={id}', [CourseController::class, 'show'])->name('courses.show');
+        Route::get('show/{id}', [CourseController::class, 'show'])->name('courses.show');
 
         Route::get('delete{id}', [CourseController::class, 'delete'])->name('courses.delete');
 
@@ -75,11 +75,11 @@ Route::prefix('admin')->middleware('auth')->group(function () {
 
         Route::post('add', [CourseController::class, 'addData'])->name('courses.addData');
 
-        Route::get('edit-id={id}', [CourseController::class, 'formEdit'])->name('courses.edit');
+        Route::get('edit/{id}', [CourseController::class, 'formEdit'])->name('courses.edit');
 
-        Route::put('edit', [CourseController::class, 'updateData'])->name('course.update');
+        Route::put('edit/{id}', [CourseController::class, 'updateData'])->name('course.update');
 
-        Route::get('export', [ExportController::class, 'exportExcel'])->name('export');
+        Route::post('export', [CourseController::class, 'export'])->name('export.excel');
     });
 
 });

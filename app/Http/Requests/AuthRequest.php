@@ -24,7 +24,7 @@ class AuthRequest extends FormRequest
     public function rules()
     {
         return [
-            'email' => 'required|string|email',
+            'email' => 'required|string|email|unique:users,email',
             'password' => 'required|string|min:6'
         ];
     }
@@ -35,7 +35,8 @@ class AuthRequest extends FormRequest
             'required' => 'Vui lòng điền :attribute',
             'string' => ':attribute không được chứa các kí tự đặc biệt',
             'email' => 'Nhập đúng định dạng email',
-            'password' => ':attribute phải có ít nhất 6 kí tự'
+            'password' => ':attribute phải có ít nhất 6 kí tự',
+            'unique' => ':attribute đã được đăng kí vui lòng sử dụng :attribute khác'
         ];
     }
 

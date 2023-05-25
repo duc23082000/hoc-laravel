@@ -25,6 +25,8 @@ class Course2Controller extends Controller
         $order = $request->order;
         // dd($search);
 
+        
+
         // Sử dụng Query Builder
         $joinResult = DB::table('courses')
         ->join('categories', 'courses.category_id', '=', 'categories.id')
@@ -38,15 +40,9 @@ class Course2Controller extends Controller
         ->orderBy($collum ?? 'courses.updated_at', $order ?? 'desc')
         ->paginate(20);
         
-
-        // Dữ liệu bảng 
-        // dd($joinResult->all());
-        $dataJoin = $joinResult->items();
-        // dd($dataJoin[0]->id);
-        
         // Đổi phương thức sắp xếp liên tục sau mỗi lần click sắp xếp
         $order = $order == 'asc' ? 'desc' : 'asc';
-        return view('admin.web.courses.List', compact('search', 'joinResult', 'dataJoin', 'order'));
+        return view('admin.web.courses.List', compact('search', 'joinResult', 'order'));
     }
 
     public function show($id){

@@ -29,7 +29,7 @@
             <h1>Course: {{ $data->course_name }}</h1>
             <p>Category: {{ $data->category->name }}</p>
             <p>Price: {{ $data->price }}$</p>
-            <p>Created by: {{ $data->user_create->email }} - <span>{{ $data->created_at }}</span></p> 
+            <p>Created by: {{ $data->user_create->email }} - <span>{{ $data->created_at }}</span></p>
             <p>Modified by: {{ $data->user_update->email }} - <span>{{ $data->updated_at }}</span></p>
             <p>Description: @php echo $data->description @endphp</p>
         </div>

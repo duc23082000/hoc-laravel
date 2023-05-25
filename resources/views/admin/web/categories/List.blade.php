@@ -109,7 +109,7 @@
         @endforeach
       </tbody>
   </table>
-  {{ $sql->links('vendor.pagination.bootstrap-5') }}
+  {{ $data->links('vendor.pagination.bootstrap-5') }}
 </div>
 @endsection
 
