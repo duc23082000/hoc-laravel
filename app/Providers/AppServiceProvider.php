@@ -4,6 +4,9 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 
+use Maatwebsite\Excel\ExcelServiceProvider;
+use Maatwebsite\Excel\Facades\Excel;
+
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -13,7 +16,13 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        $this->app->register(ExcelServiceProvider::class);
+
+        // Other code...
+
+        Excel::extend('excel', function ($excel, $app) {
+            $excel->getProperties()->setTitle('Title')->setDescription('Description');
+        });
     }
 
     /**

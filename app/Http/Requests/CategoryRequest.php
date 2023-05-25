@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use App\Models\Category;
 
 class CategoryRequest extends FormRequest
 {
@@ -23,8 +24,9 @@ class CategoryRequest extends FormRequest
      */
     public function rules()
     {
+        // dd($this->input('id'));
         return [
-            'name' => 'required',
+            'name' => 'required|unique:categories,name,'. $this->input('id') .',id',
             'order' => 'required|integer|gt:0'
         ];
     }
@@ -33,6 +35,7 @@ class CategoryRequest extends FormRequest
     {
         return [
             'name.required' => 'Tên sản phẩm không được để trống',
+            'name.unique' => 'Tên sản phẩm đã tồn tại',
             'order.required' => 'Số lượng không được để trống',
             'order.integer' => 'Số lượng phải là số nguyên',
             'order.gt' => 'Số lượng phải lớn hơn 0'

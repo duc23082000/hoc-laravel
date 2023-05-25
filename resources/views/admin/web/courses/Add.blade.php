@@ -8,11 +8,8 @@
             <label for="name">Name:</label>
             <input type="text" class="form-control"
             id="name" name="name"
-            value="@if (session('name')) {{ session('name') }}@else{{ old('name') }}@endif" placeholder="Name...">
+            value="{{ old('name') }}" placeholder="Name...">
         </div>
-        @if (session('message2'))
-          <p style="color: red">{{ session('message2') }}</p>
-        @endif
         @error('name')
             <p style="color: red">{{ $message }}</p>
         @enderror
@@ -22,7 +19,7 @@
             <label for="price">Price:</label>
             <input type="text" class="form-control"
             id="price" name="price"
-            value="@if (session('price')) {{ session('price') }}@else{{ old('price') }}@endif" placeholder="Price...">
+            value="{{ old('price') }}" placeholder="Price...">
         </div>
         @error('price')
             <p style="color: red">{{ $message }}</p>
@@ -32,7 +29,7 @@
         <div class="form-floating" style="width: 30%;">
             <select class="form-select" aria-label="Floating label select example"
                     id="floatingSelect" name="category">
-              <option selected value="{{ old('category') ?? '' }}">{{ old('category') ?? 'Chọn dữ liệu' }}</option>
+              <option selected value="{{ old('category') ?? '' }}">Chọn dữ liệu</option>
             
               @foreach ($categorylist as $item)
                 <option value="{{ $item->id }}">{{ $item->name }}</option>
@@ -57,6 +54,9 @@
         @if (session('message'))
             <p style="color: red">{{ session('message') }}</p>
         @endif
+        @error('image')
+            <p style="color: red">{{ $message }}</p>
+        @enderror
 
         @csrf
         <button type="submit" class="btn btn-primary">Thêm</button>

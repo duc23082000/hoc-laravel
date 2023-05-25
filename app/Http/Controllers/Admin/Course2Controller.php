@@ -25,6 +25,8 @@ class Course2Controller extends Controller
         $order = $request->order;
         // dd($search);
 
+        
+
         // Sử dụng Query Builder
         $joinResult = DB::table('courses')
         ->join('categories', 'courses.category_id', '=', 'categories.id')
@@ -38,38 +40,23 @@ class Course2Controller extends Controller
         ->orderBy($collum ?? 'courses.updated_at', $order ?? 'desc')
         ->paginate(20);
         
-
-        // Dữ liệu bảng 
-        // dd($joinResult->all());
-        $dataJoin = $joinResult->items();
-        // dd($dataJoin[0]->id);
-        
         // Đổi phương thức sắp xếp liên tục sau mỗi lần click sắp xếp
         $order = $order == 'asc' ? 'desc' : 'asc';
-        return view('admin.web.courses.List', compact('search', 'joinResult', 'dataJoin', 'order'));
+        return view('admin.web.courses.List', compact('search', 'joinResult', 'order'));
     }
 
     public function show($id){
         // Join bảng để lấy dữ liệu thông tin khóa học
-        $joinCategories = DB::table('courses')
+        $joinData = DB::table('courses')
         ->join('categories', 'courses.category_id', '=', 'categories.id')
+        ->join('users as created_by', 'courses.created_by_id', '=', 'created_by.id')
+        ->join('users as modified_by', 'courses.modified_by_id', '=', 'modified_by.id')
+        ->select('courses.*', 'categories.name', 'created_by.email', 'modified_by.email')
         ->where('courses.id', $id)
-        ->whereNull('courses.deleted_at')->get();
-        // dd($joinCategories);
+        ->whereNull('courses.deleted_at')
+        ->first();
 
-        // Join bảng để lấy dữ thông tin người tạo khóa học 
-        $joinUserCreate = DB::table('courses')
-        ->join('users', 'courses.created_by_id', '=', 'users.id')
-        ->where('courses.id', $id)
-        ->whereNull('courses.deleted_at')->get();
-
-        // Join bảng để lấy dữ thông tin người sửa khóa học 
-        $joinUserModify = DB::table('courses')
-        ->join('users', 'courses.modified_by_id', '=', 'users.id')
-        ->where('courses.id', $id)
-        ->whereNull('courses.deleted_at')->get();
-
-        return view('admin.web.courses.Show',compact('joinCategories', 'joinUserCreate', 'joinUserModify'));
+        return view('admin.web.courses.Show',compact('joinData'));
     }
 
     public function delete($id){

@@ -19,18 +19,15 @@ class CategoryController extends Controller
 
         $order = $request->order;
         // dd($order);
-        $sql = Category::where('name', 'LIKE', '%' . $search . '%')
+        $data = Category::where('name', 'LIKE', '%' . $search . '%')
                   ->orWhere('id', $search)
                   ->orderBy($collum ?? 'updated_at', $order ?? 'desc')
                   ->paginate(20);
-        // dd($sql);
-
-        $data = $sql->items();
         // dd($data[0]->id);
 
         // Đổi phương thức sắp xếp liên tục sau mỗi lần click sắp xếp
         $order = $order == 'asc' ? 'desc' : 'asc';
-        return view('admin.web.categories.List', compact('data', 'sql', 'search', 'order'));
+        return view('admin.web.categories.List', compact('data', 'search', 'order'));
     }
 
     public function delete($id){
@@ -52,59 +49,39 @@ class CategoryController extends Controller
         return view('admin.web.categories.Add');
     }
 
-    public function addData(CategoryRequest $request){
+    public function addData(CategoryRequest $request)
+    {
 
         $name = $request->name;
         $order = $request->order;
 
-        // Kiểm tra xem tên đã có hay chưa
-        $select =  Category::where('name', $name)->get()->toArray();
-        // $a = Category::where('name', $name)->get();
-        // dd($a[0]->id);
-        if(empty($select)){
-            $add = new Category;
-            $add->name = $name;
-            $add->order = $order;
-            $add->save();
-            return redirect(route('categories.list'))->with('message', 'Thêm sản phẩm thành công');
-        } else {
-            return back()->with(['message2'=>'Sản phẩm đã tồn tại', 'name'=>$name, 'order'=>$order]);
-        }
+        $add = new Category;
+        $add->name = $name;
+        $add->order = $order;
+        $add->save();
+        return redirect(route('categories.list'))->with('message', 'Thêm sản phẩm thành công');
     }
 
-    public function formEdit($id, Request $request){
-        // tạo biến id thông qua session 
-        $request->session()->put('id', $id);
+    public function formEdit($id){
 
-        // Kiểm tra xem id đc truyền vào thông qua url có tồn tại hay không
-        $categoryEdit = collect(Category::find($id))->toArray();
+        $categoryEdit = Category::find($id);
         // dd($categoryEdit);
-        if(!empty($categoryEdit)){
-            return view('admin.web.categories.Edit', compact('categoryEdit'));
-        } else {
+        if(!$categoryEdit){
             return back();
         }
+        return view('admin.web.categories.Edit', compact('categoryEdit', 'id'));
     }
 
-    public function updateData(CategoryRequest $request){
-        // lấy ra biến id được tạo thông qua session 
-        $id = session('id');
-        // dd($id);
+    public function updateData($id, CategoryRequest $request)
+    {
         $name = $request->name;
         $order = $request->order;
 
-        // kiểm tra xem tên có hay chưa
-        $select =  collect(Category::where('name', $name)->where('id', '!=', $id)->get())->toArray();
-        // dd($select);
-        if(empty($select)){
-            $add =  Category::find($id);
-            // dd($add);
-            $add->name = $name;
-            $add->order = $order;
-            $add->save();
-            return redirect(route('categories.list'))->with('message', 'Sửa sản phẩm thành công');
-        } else {
-            return back()->with(['message2'=>'Sản phẩm đã tồn tại', 'name'=>$name, 'order'=>$order]);
-        }
+        $add =  Category::find($id);
+        // dd($add);
+        $add->name = $name;
+        $add->order = $order;
+        $add->save();
+        return redirect(route('categories.list'))->with('message', 'Sửa sản phẩm thành công');
     }
 }

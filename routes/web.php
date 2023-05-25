@@ -8,6 +8,7 @@ use App\Http\Controllers\Client\HomeController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\CourseController;
 use App\Http\Controllers\Admin\Course2Controller;
+use App\Http\Controllers\Admin\ExportController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Routing\RouteGroup;
 
@@ -58,25 +59,27 @@ Route::prefix('admin')->middleware('auth')->group(function () {
 
         Route::post('add', [CategoryController::class, 'addData'])->name('addData');
 
-        Route::get('edit-id={id}', [CategoryController::class, 'formEdit'])->name('categories.edit');
+        Route::get('edit/{id}', [CategoryController::class, 'formEdit'])->name('categories.edit');
 
-        Route::put('edit', [CategoryController::class, 'updateData'])->name('updateData');
+        Route::put('edit/{id}', [CategoryController::class, 'updateData'])->name('updateData');
     });
 
     Route::prefix('courses')->group(function () {
-        Route::get('list', [Course2Controller::class, 'list'])->name('courses.list');
+        Route::get('list', [CourseController::class, 'list'])->name('courses.list');
 
-        Route::get('show/id={id}', [Course2Controller::class, 'show'])->name('courses.show');
+        Route::get('show/{id}', [CourseController::class, 'show'])->name('courses.show');
 
-        Route::get('delete{id}', [Course2Controller::class, 'delete'])->name('courses.delete');
+        Route::get('delete{id}', [CourseController::class, 'delete'])->name('courses.delete');
 
-        Route::get('add', [Course2Controller::class, 'formAdd'])->name('courses.add');
+        Route::get('add', [CourseController::class, 'formAdd'])->name('courses.add');
 
-        Route::post('add', [Course2Controller::class, 'addData'])->name('courses.addData');
+        Route::post('add', [CourseController::class, 'addData'])->name('courses.addData');
 
-        Route::get('edit-id={id}', [Course2Controller::class, 'formEdit'])->name('courses.edit');
+        Route::get('edit/{id}', [CourseController::class, 'formEdit'])->name('courses.edit');
 
-        Route::put('edit', [Course2Controller::class, 'updateData'])->name('course.update');
+        Route::put('edit/{id}', [CourseController::class, 'updateData'])->name('course.update');
+
+        Route::post('export', [CourseController::class, 'export'])->name('export.excel');
     });
 
 });

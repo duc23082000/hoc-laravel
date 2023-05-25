@@ -2,19 +2,17 @@
 
 @section('content')
 <div class="right_col" role="main">
-    <form action="{{ route('updateData') }}" method="POST">
+    <form action="" method="POST">
         <div class="form-group">
             <label for="name">Name:</label>
             <input type="text" class="form-control"
             id="name" name="name"
-            value="@if(session('name')) {{ session('name') }}@else{{ old('name') ?? $categoryEdit['name'] }}@endif" placeholder="Name...">
+            value="{{ old('name') ?? $categoryEdit['name'] }}" placeholder="Name...">
         </div>
-        @if (session('message2'))
-          <p style="color: red">{{ session('message2') }}</p>
-        @endif
         @error('name')
             <p style="color: red">{{ $message }}</p>
         @enderror
+
         <div class="form-group">
             <label for="order">Order:</label>
             <input type="text" class="form-control"
@@ -24,6 +22,9 @@
         @error('order')
             <p style="color: red">{{ $message }}</p>
         @enderror
+        
+        <input type="hidden" name="id" value="{{ $id }}">
+
         @csrf
         @method('PUT')
         <button type="submit" class="btn btn-primary">Sửa</button>
