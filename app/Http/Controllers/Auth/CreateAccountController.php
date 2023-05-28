@@ -22,22 +22,13 @@ class CreateAccountController extends Controller
     // xử lí đăng kí tài khoản 
     public function createPost(AuthRequest $request)
     {
+        // Băm mật khẩu và lưu thông tin user
+        $password = Hash::make($request->password);
+        $user = new UserModel();
+        $user->email = $request->email;
+        $user->password = $password;
+        $user->save();
 
-        $email = $request->email;
-
-        // Kiểm tra xem mật khẩu có trùng khớp hay không
-        if ($request->password === $request->cfpassword) {
-            
-            // băm password và lưu dữ liệu
-            $password = Hash::make($request->password);
-            UserModel::insert([
-                'email' => $email,
-                'password' => $password
-            ]);
-            return redirect(route('login'));
-        } else {
-            return back()->with(['message' => 'Mật khẩu không trùng khớp', 'email' => $email]);
-        }
+        return redirect(route('login'))->with('message2', 'Đăng ký thành công vui lòng đăng nhập tài khoản');
     }
-
 }

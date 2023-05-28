@@ -15,97 +15,83 @@ use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\AuthRequest;
 use App\Http\Requests\ChangePassRequest;
 use Illuminate\Support\Carbon;
+use App\Http\Requests\LossPassRequest;
 
 class LostPasswordController extends Controller
 {
     //  form Gửi email để nhận link đổi mk
-    public function addEmail(){
-        
+    public function addEmail()
+    {
+
         return view('admin.auth.lostPassword');
     }
 
     // Xử lí email đc gửi
-    public function checkEmail(Request $request){
+    public function checkEmail(LossPassRequest $request)
+    {
         $email = $request->email;
-
-        // Kiểm tra xem email có tồn tại hay không 
-        $check = UserModel::where('email', $email)->get()->toArray();
-        // dd($check);
-        if(!empty($check)){
-
-            // Tạo token và gửi link 
-            // $token = Str::random(35);
-            // // dd($token);
-            // UserModel::where('email', $email)->update(['token'=> $token]);
-            // Mail::to($email)->send(new Mailsend($email, $token));
-            Password::sendResetLink(
-                $request->only('email')
-            );
-            return back()->with(['message2' => 'Gửi yêu cầu thành công! Vui lòng kiểm tra mail để đổ mật khẩu', 'email' => $email]);
-        } else {
-            // dd($email);
-            return back()->with(['message' => 'Tài khoản không tồn tại', 'email' => $email]);
-        }
+        // Tạo token và gửi link 
+        // $token = Str::random(35);
+        // // dd($token);
+        // UserModel::where('email', $email)->update(['token'=> $token]);
+        // Mail::to($email)->send(new Mailsend($email, $token));
+        Password::sendResetLink(
+            $request->only('email')
+        );
+        return back()->with(['message2' => 'Gửi yêu cầu thành công! Vui lòng kiểm tra mail để đổ mật khẩu', 'email' => $email]);
     }
 
     // form đổi mk 
-    public function formReset(Request $request, $email, $token) {
+    public function formReset(Request $request, $email, $token)
+    {
         // check xem token link đã được tạo hay chưa
         $tokenCheck = collect(ResetpassModel::select('token')->where('email', $email)->get())->toArray();
         // dd($tokenCheck);
         // dd($token);
-        if(!empty($tokenCheck)){
+        if (!empty($tokenCheck)) {
             $request->session()->put('email', $email);
             $request->session()->put('token', $token);
 
-            if(Hash::check($token, $tokenCheck[0]['token'])){
-                return view('admin.auth.resetPassword')->with(['email'=>$email, 'token'=>$token]);
+            if (Hash::check($token, $tokenCheck[0]['token'])) {
+                return view('admin.auth.resetPassword')->with(['email' => $email, 'token' => $token]);
             } else {
                 return 'sai trang';
             }
         } else {
             return 'ko ton tai';
         }
-        
     }
 
-    public function resetPass(ChangePassRequest $request){
-
-        // dd('hello');
+    public function resetPass(ChangePassRequest $request)
+    {
         $email = session('email');
         $token = session('token');
         // dd($email);
 
-        // Kiểm tra xem password và cfpassword có trùng hay không
-        if($request->password === $request->cfpassword){
-            
-            $timenow = Carbon::now()->addHours(-1)->format('Y-m-d H:i:s');
-            // dd($timenow);
-            $created_at = ResetpassModel::select('created_at')
+
+        $timenow = Carbon::now()->addHours(-1)->format('Y-m-d H:i:s');
+        // dd($timenow);
+        $created_at = ResetpassModel::select('created_at')
             ->where('email', $email)
             ->get();
 
-            // Kiểm tra xem link còn hạn hay không nếu còn thì đổi mật khẩu nếu hết hạn thì xóa link
-            if($timenow < $created_at[0]){
-                // băm password
-                $password = Hash::make($request->password);
-                // dd($email);
-                
-                // đổi password
-                $reset = UserModel::where('email', $email)->update(['password'=>$password]);
-                
-                // xóa link đổi mk  và quay lại trang đăng nhập
-                $deleteToken = ResetpassModel::where('email', $email)->delete();
-                // dd($deleteToken);
-                return redirect(route('login'))->with(['message2'=>'Đổi mật khẩu thành công!', 'email'=>$email]);
-            } else {
-                // xóa link đổi mật khẩu và quay lại trang gửi mail
-                $deleteToken = ResetpassModel::where('email', $email)->delete();
-                return redirect(route('lostPass'))->with(['message'=>'Liên kết đã hết hạn xin vui lòng nhập lại Email để nhận liên kết mới', 'email'=>$email]);
-            }
-            
+        // Kiểm tra xem link còn hạn hay không nếu còn thì đổi mật khẩu nếu hết hạn thì xóa link
+        if ($timenow < $created_at[0]) {
+            // băm password
+            $password = Hash::make($request->password);
+            // dd($email);
+
+            // đổi password
+            $reset = UserModel::where('email', $email)->update(['password' => $password]);
+
+            // xóa link đổi mk  và quay lại trang đăng nhập
+            $deleteToken = ResetpassModel::where('email', $email)->delete();
+            // dd($deleteToken);
+            return redirect(route('login'))->with(['message2' => 'Đổi mật khẩu thành công!', 'email' => $email]);
         } else {
-            return back()->with(['message'=>'Mật khẩu không trùng khớp']);
+            // xóa link đổi mật khẩu và quay lại trang gửi mail
+            $deleteToken = ResetpassModel::where('email', $email)->delete();
+            return redirect(route('lostPass'))->with(['message' => 'Liên kết đã hết hạn xin vui lòng nhập lại Email để nhận liên kết mới', 'email' => $email]);
         }
     }
 }

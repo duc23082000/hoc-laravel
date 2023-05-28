@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Http\Requests\CourseRequest;
+use App\Http\Requests\ImportRequest;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -18,6 +19,7 @@ use App\Models\Course;
 use Illuminate\Support\Facades\Auth;
 
 use App\Exports\CoursesExport;
+use App\Imports\ImportExcel;
 use Maatwebsite\Excel\Facades\Excel;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
@@ -40,10 +42,7 @@ class CourseController extends Controller
         $orderExport = $request->order;
 
         $case = $request->case;
-        // dd($case);
-        // $filteredCourses = Course::where('fee_type', 'like', 'm%')->get();
-        // dd($filteredCourses);
-        // Sử dụng Eloquent
+
         $joinResult = Course::with(['category', 'user_create', 'user_update'])
         ->where(function ($query) use ($search) {
             $query->where('courses.id', $search)
@@ -129,6 +128,7 @@ class CourseController extends Controller
             return redirect(route('courses.list'))->with('message', 'Thêm khóa học thành công');
         }
         $image = $request->image;
+        // dd($image);
         $fileName = Str::random(40) . '.' . $image->getClientOriginalExtension();
         // dd($fileName);
         $path = $image->storeAs('images', $fileName, 'public');
@@ -169,28 +169,19 @@ class CourseController extends Controller
         $course->modified_by_id = Auth::user()->id;
 
         // Kiểm tra xem người dùng có gửi ảnh không
-        if (!$request->image) {
+        $image = $request->image;
+        // dd($image);
+        if (!$image) {
             $course->save();
             return redirect(route('courses.list'))->with('message', 'Sửa khóa học thành công');
         }
-
-        $image_old = Course::find($id)->image;
-        // dd($image_old);
-
-        $image = $request->image;
-
+        
         // Kiểm tra xem có ảnh cũ hay không nếu có thì xóa file cũ và thêm file mới còn không thì thêm luôn file mơis
+        $image_old = $course->image;
+        // dd($image_old);
         if (!empty($image_old)) {
             // Xóa file cũ
             File::delete(storage_path('app/public/images/' . $image_old));
-            // Đổi tên và lưu file mới
-            $fileName = Str::random(40) . '.' . $image->getClientOriginalExtension();
-            // dd($fileName);
-            $path = $image->storeAs('images', $fileName, 'public');
-            $course->image = $fileName;
-            $course->save();
-
-            return redirect(route('courses.list'))->with('message', 'Sửa khóa học thành công');
         }
 
         // Đổi tên và lưu ảnh 
@@ -207,5 +198,18 @@ class CourseController extends Controller
     public function export(Request $request){
         // dd($request->sort);
         return Excel::download(new CoursesExport($request->search, $request->sort, $request->order, $request->case), 'courses.xlsx');
+    }
+
+    public function importForm(){
+        return view('admin.web.courses.import');
+    }
+
+    public function import(ImportRequest $request) {
+        $file = $request->excel;
+        // dd($file);
+
+        Excel::import(new ImportExcel, $file);
+
+        return redirect(route(session('name')))->with('message', 'Import thành công.');
     }
 }

@@ -3,8 +3,9 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Contracts\Validation\Validator;
 
-class ChangePassRequest extends FormRequest
+class ImportRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,17 +25,17 @@ class ChangePassRequest extends FormRequest
     public function rules()
     {
         return [
-            'password' => 'required|string|min:6|same:cfpassword'
+            'excel' => 'required|mimes:xlsx',
         ];
     }
 
     public function messages()
     {
         return [
-            'password.required' => 'Vui lòng điền Mật khẩu',
-            'password.string' => 'Mật khẩu không được chứa các kí tự đặc biệt',
-            'password.min' => 'Mật khẩu phải có ít nhất 6 kí tự',
-            'password.same' => 'Mật khẩu không trùng khớp vui lòng nhập lại',
+            'excel.required' => 'Vui lòng gửi file',
+            'excel.mimes' => 'Không đúng định dạng excel (.xlsx). Vui lòng kiểm tra lại'
         ];
     }
+
+    
 }

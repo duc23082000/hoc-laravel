@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class ChangePassRequest extends FormRequest
+class LossPassRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,17 +24,14 @@ class ChangePassRequest extends FormRequest
     public function rules()
     {
         return [
-            'password' => 'required|string|min:6|same:cfpassword'
+            'email' => 'exists:users,email,deleted_at,NULL'
         ];
     }
 
     public function messages()
     {
         return [
-            'password.required' => 'Vui lòng điền Mật khẩu',
-            'password.string' => 'Mật khẩu không được chứa các kí tự đặc biệt',
-            'password.min' => 'Mật khẩu phải có ít nhất 6 kí tự',
-            'password.same' => 'Mật khẩu không trùng khớp vui lòng nhập lại',
+            'email.exists' => 'Email không tồn tại. Vui lòng kiểm tra lại'
         ];
     }
 }

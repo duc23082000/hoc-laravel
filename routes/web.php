@@ -39,6 +39,10 @@ Route::prefix('user')->middleware('check.login')->group(function () {
     Route::get('reset-password/email={email}&token={token}', [LostPasswordController::class, 'formReset'])->name('password.reset');
 
     Route::post('reset-password', [LostPasswordController::class, 'resetPass'])->name('reset');
+
+    Route::get('login/google', [LoginController::class, 'redirectToGoogle'])->name('login.Google');
+
+    Route::get('login/google/callback', [LoginController::class, 'handleGoogleCallback']);
 });
 
 Route::prefix('admin')->middleware('auth')->group(function () {
@@ -80,6 +84,10 @@ Route::prefix('admin')->middleware('auth')->group(function () {
         Route::put('edit/{id}', [CourseController::class, 'updateData'])->name('course.update');
 
         Route::post('export', [CourseController::class, 'export'])->name('export.excel');
+
+        Route::get('import', [CourseController::class, 'importForm'])->name('import.form');
+
+        Route::post('import', [CourseController::class, 'import'])->name('import.excel');
     });
 
 });

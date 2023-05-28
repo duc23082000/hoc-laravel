@@ -25,7 +25,7 @@ class AuthRequest extends FormRequest
     {
         return [
             'email' => 'required|string|email|unique:users,email',
-            'password' => 'required|string|min:6'
+            'password' => 'required|string|min:6|same:cfpassword'
         ];
     }
 
@@ -36,7 +36,8 @@ class AuthRequest extends FormRequest
             'string' => ':attribute không được chứa các kí tự đặc biệt',
             'email' => 'Nhập đúng định dạng email',
             'password' => ':attribute phải có ít nhất 6 kí tự',
-            'unique' => ':attribute đã được đăng kí vui lòng sử dụng :attribute khác'
+            'unique' => ':attribute đã được đăng kí vui lòng sử dụng :attribute khác',
+            'password.same' => 'Mật khẩu không trùng khớp'
         ];
     }
 

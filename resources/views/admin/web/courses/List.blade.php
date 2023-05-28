@@ -31,18 +31,21 @@
       <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
   </form>
 
-  <a href="{{ route('courses.add') }}" class="btn btn-outline-success">Thêm</a>
+  
   <form action="{{ route('export.excel') }}" method="POST">
+    <a href="{{ route('courses.add') }}" class="btn btn-outline-success">Thêm</a>
     <input type="hidden" name="sort" value="{{ $collum }}">
     <input type="hidden" name="order" value="{{ $orderExport }}">
     <input type="hidden" name="search" value="{{ $search }}">
     @csrf
     <button type="submit" class="btn btn-outline-success">Export Excel</button>
+    <a href="{{ route('import.form') }}" class="btn btn-outline-success">Import Excel</a>
   </form>
   
   @if (session('message'))
       <p class="alert alert-primary" style="text-align: center">{{ session('message') }}</p>
   @endif
+
   <table class="table table-bordered">
       <thead>
         <tr>
@@ -153,8 +156,12 @@
               </td>
               <td onclick="location.href='{{ route('courses.show', ['id'=>$item->id]) }}'" 
                 style="cursor: pointer;">
-              {{ $item->fee_type }}
-            </td>
+                @if ($item->fee_type == 'Miễn phí')
+                    <p style="color:cornflowerblue">{{ $item->fee_type }}</p>
+                @else
+                    <p style="color:rgb(154, 207, 30)">{{ $item->fee_type }}</p>
+                @endif
+              </td>
               <td onclick="location.href='{{ route('courses.show', ['id'=>$item->id]) }}'" 
                   style="cursor: pointer;">
                 {{ $item->category->name }}
