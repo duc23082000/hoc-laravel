@@ -5,10 +5,10 @@
     <form action="{{ route('courses.addData') }}" method="POST" enctype="multipart/form-data">
         {{-- Tên course  --}}
         <div class="form-group">
-            <label for="name">Name:</label>
+            <label for="name">@lang('content.name'):</label>
             <input type="text" class="form-control"
             id="name" name="name"
-            value="{{ old('name') }}" placeholder="Name...">
+            value="{{ old('name') }}" placeholder="@lang('content.name')...">
         </div>
         @error('name')
             <p style="color: red">{{ $message }}</p>
@@ -16,10 +16,10 @@
 
         {{-- Giá course  --}}
         <div class="form-group">
-            <label for="price">Price:</label>
+            <label for="price">@lang('content.price'):</label>
             <input type="text" class="form-control"
             id="price" name="price"
-            value="{{ old('price') }}" placeholder="Price...">
+            value="{{ old('price') }}" placeholder="@lang('content.price')...">
         </div>
         @error('price')
             <p style="color: red">{{ $message }}</p>
@@ -36,31 +36,39 @@
               @endforeach
 
             </select>
-            <label for="floatingSelect">Category:</label>
+            <label for="floatingSelect">@lang('content.category'):</label>
         </div>
         @error('category')
             <p style="color: red">{{ $message }}</p>
         @enderror
 
+        {{-- Trạng thái khóa học  --}}        
+        <div>
+            @lang('content.status'):
+            @foreach ($arrayCourseStatus as $key => $value)
+            <input class="form-check-input" type="radio" name="status" value="{{ $value }}" @if($value == old('status') || $value == 0)checked @endif > @lang('content.courseStatus.' .$key)
+            @endforeach
+        </div>
+        @error('status')
+            <p style="color: red">{{ $message }}</p>
+        @enderror
+
         {{-- Nội dung khóa học  --}}
-        <label for="description">Description:</label>
+        <label for="description">@lang('content.description'):</label>
 	    <textarea id="description" name="description" rows="10">@if (session('description')) {{ session('description') }}@else{{ old('description') }}@endif</textarea>
 
         {{-- Ảnh course  --}}
         <div class="mb-3">
-            <label for="image">Image:</label>
+            <label for="image">@lang('content.image'):</label>
             <input class="form-control form-control-sm" type="file" name="image" id="image">
         </div>
-        @if (session('message'))
-            <p style="color: red">{{ session('message') }}</p>
-        @endif
         @error('image')
             <p style="color: red">{{ $message }}</p>
         @enderror
 
         @csrf
-        <button type="submit" class="btn btn-primary">Thêm</button>
-        <a href="{{ route('courses.list') }}" class="btn btn-secondary">Thoát</a>
+        <button type="submit" class="btn btn-primary">@lang('content.add')</button>
+        <a href="{{ route('courses.list') }}" class="btn btn-secondary">@lang('content.back')</a>
     </form>
 </div>
 @endsection

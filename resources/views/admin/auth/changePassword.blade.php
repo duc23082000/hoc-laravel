@@ -4,6 +4,12 @@
     <form action="{{ route('change') }}" method="POST">
         <h1>Change Password</h1>
         <div>
+            <input type="password" class="form-control" name="current_password" value="{{ old('password') }}" placeholder="Current Password" />
+            @error('current_password')
+                <p style="color: red">{{ $message }}</p>
+            @enderror
+        </div>
+        <div>
             <input type="password" class="form-control" name="password" value="{{ old('password') }}" placeholder="Password" />
             @error('password')
                 <p style="color: red">{{ $message }}</p>

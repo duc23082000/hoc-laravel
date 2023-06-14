@@ -25,15 +25,15 @@ class ImportRequest extends FormRequest
     public function rules()
     {
         return [
-            'excel' => 'required|mimes:xlsx',
+            'excel.*' => 'required|mimes:xlsx',
         ];
     }
 
     public function messages()
     {
         return [
-            'excel.required' => 'Vui lòng gửi file',
-            'excel.mimes' => 'Không đúng định dạng excel (.xlsx). Vui lòng kiểm tra lại'
+            'excel.*.required' => 'Vui lòng gửi file',
+            'excel.*.mimes' => 'Không đúng định dạng excel (.xlsx). Vui lòng kiểm tra lại'
         ];
     }
 

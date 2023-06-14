@@ -27,23 +27,26 @@
   <form action="" method="GET">
       <input class="form-control mr-sm-2 input" type="search" 
       name="search" value="{{ $search }}"
-      placeholder="Search" aria-label="Search">
-      <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+      placeholder="@lang('content.search')" aria-label="Search">
+      <button class="btn btn-outline-success my-2 my-sm-0" type="submit">@lang('content.search')</button>
   </form>
 
   
   <form action="{{ route('export.excel') }}" method="POST">
-    <a href="{{ route('courses.add') }}" class="btn btn-outline-success">Thêm</a>
+    <a href="{{ route('courses.add') }}" class="btn btn-outline-success">@lang('content.add')</a>
     <input type="hidden" name="sort" value="{{ $collum }}">
     <input type="hidden" name="order" value="{{ $orderExport }}">
     <input type="hidden" name="search" value="{{ $search }}">
     @csrf
-    <button type="submit" class="btn btn-outline-success">Export Excel</button>
-    <a href="{{ route('import.form') }}" class="btn btn-outline-success">Import Excel</a>
+    <button type="submit" class="btn btn-outline-success">@lang('content.export')</button>
+    <a href="{{ route('import.form') }}" class="btn btn-outline-success">@lang('content.import')</a>
   </form>
   
   @if (session('message'))
       <p class="alert alert-primary" style="text-align: center">{{ session('message') }}</p>
+  @endif
+  @if (session('message2'))
+      <p class="alert alert-danger" style="text-align: center">{{ session('message2') }}</p>
   @endif
 
   <table class="table table-bordered">
@@ -56,81 +59,100 @@
                     <input type="hidden" name="sort" value="courses.id">
                     <input type="hidden" name="order" value="{{ $order ?? 'asc' }}">
                     <input type="hidden" name="search" value="{{ $search }}">
+                    <input type="hidden" name="page" value="{{ $page ?? 1 }}">
                     <button class="button-sorf"><i class="fa fa-sort" aria-hidden="true"></i></button>
                 </form>
             </th>
             <th scope="col" style="width: 20%">
               <form action="" method="get">
-                Name
+                @lang('content.name')
                 <input type="hidden" name="sort" value="courses.course_name">
                 <input type="hidden" name="order" value="{{ $order ?? 'asc' }}">
                 <input type="hidden" name="search" value="{{ $search }}">
+                <input type="hidden" name="page" value="{{ $page ?? 1}}">
                 <button class="button-sorf"><i class="fa fa-sort" aria-hidden="true"></i></button>
               </form>
             </th>
             <th scope="col" style="width: 5%">
               <form action="" method="get">
-                Price
+                @lang('content.price')
                 <input type="hidden" name="sort" value="courses.price">
                 <input type="hidden" name="order" value="{{ $order ?? 'asc' }}">
                 <input type="hidden" name="search" value="{{ $search }}">
+                <input type="hidden" name="page" value="{{ $page ?? 1}}">
                 <button class="button-sorf"><i class="fa fa-sort" aria-hidden="true"></i></button>
               </form>
             </th>
             <th scope="col" style="width: 5%">
               <form action="" method="get">
-                Type
+                @lang('content.type')
                 <input type="hidden" name="sort" value="courses.price">
                 <input type="hidden" name="order" value="{{ $order ?? 'asc' }}">
                 <input type="hidden" name="search" value="{{ $search }}">
+                <input type="hidden" name="page" value="{{ $page ?? 1}}">
                 <button class="button-sorf"><i class="fa fa-sort" aria-hidden="true"></i></button>
               </form>
             </th>
-            <th scope="col" style="width: 15%">
+            <th scope="col" style="width: 9%">
               <form action="" method="get">
-                Category
+                @lang('content.category')
                 <input type="hidden" name="sort" value="categories.name">
                 <input type="hidden" name="order" value="{{ $order ?? 'asc' }}">
                 <input type="hidden" name="search" value="{{ $search }}">
                 <input type="hidden" name="case" value="1">
+                <input type="hidden" name="page" value="{{ $page ?? 1}}">
                 <button class="button-sorf"><i class="fa fa-sort" aria-hidden="true"></i></button>
+              </form>
+            </th>
+            <th scope="col" style="width: 7%">
+              <form action="" method="get">
+                @lang('content.status')
+                <input type="hidden" name="sort" value="courses.status">
+                <input type="hidden" name="order" value="{{ $order ?? 'asc' }}">         
+                <input type="hidden" name="search" value="{{ $search }}">
+                <input type="hidden" name="page" value="{{ $page ?? 1}}">
+                <button class="button-sorf"><i class="fa fa-sort" aria-hidden="true"></i></button>`
               </form>
             </th>
             <th scope="col" style="width: 15%">
               <form action="" method="get">               
-                Created By
+                @lang('content.createdBy')
                 <input type="hidden" name="sort" value="create_users.email">
                 <input type="hidden" name="order" value="{{ $order ?? 'asc' }}">
                 <input type="hidden" name="search" value="{{ $search }}">
                 <input type="hidden" name="case" value="2">
+                <input type="hidden" name="page" value="{{ $page ?? 1 }}">
                 <button class="button-sorf"><i class="fa fa-sort" aria-hidden="true"></i></button>
               </form>
             </th>
             <th scope="col" style="width: 15%">
               <form action="" method="get">
-                Modified By
+                @lang('content.modifiedBy')
                 <input type="hidden" name="sort" value="email2">
                 <input type="hidden" name="order" value="{{ $order ?? 'asc' }}">
                 <input type="hidden" name="search" value="{{ $search }}">
                 <input type="hidden" name="case" value="3">
+                <input type="hidden" name="page" value="{{ $page ?? 1 }}">
                 <button class="button-sorf"><i class="fa fa-sort" aria-hidden="true"></i></button>
               </form>
             </th>
             <th scope="col" style="width: 10%">
               <form action="" method="get">
-                Created at
+                @lang('content.createdAt')
                 <input type="hidden" name="sort" value="courses.created_at">
                 <input type="hidden" name="order" value="{{ $order ?? 'asc' }}">         
                 <input type="hidden" name="search" value="{{ $search }}">
+                <input type="hidden" name="page" value="{{ $page ?? 1 }}">
                 <button class="button-sorf"><i class="fa fa-sort" aria-hidden="true"></i></button>
               </form>
             </th>
             <th scope="col" style="width: 10%">
               <form action="" method="get">
-                Modified at
+                @lang('content.modifiedAt')
                 <input type="hidden" name="sort" value="courses.updated_at">
                 <input type="hidden" name="order" value="{{ $order ?? 'asc' }}">
                 <input type="hidden" name="search" value="{{ $search }}">
+                <input type="hidden" name="page" value="{{ $page ?? 1}}">
                 <button class="button-sorf"><i class="fa fa-sort" aria-hidden="true"></i></button>
               </form>
             </th>
@@ -168,6 +190,10 @@
               </td>
               <td onclick="location.href='{{ route('courses.show', ['id'=>$item->id]) }}'" 
                 style="cursor: pointer;">
+                {{-- {{ $item->status_name }} --}} @lang('content.courseStatus.' .$status[$item->status])
+              </td>
+              <td onclick="location.href='{{ route('courses.show', ['id'=>$item->id]) }}'" 
+                style="cursor: pointer;">
                 {{ $item->user_create->email }}
               </td>
               <td onclick="location.href='{{ route('courses.show', ['id'=>$item->id]) }}'" 
@@ -182,10 +208,10 @@
               </td>
               <td>
                 <a href="{{ route('courses.edit', ['id'=>$item->id]) }}"
-                class="btn btn-warning btn-sm">Sửa</a>
+                class="btn btn-warning btn-sm">@lang('content.edit')</a>
                 <a href="{{ route('courses.delete', ['id'=>$item->id]) }}"
                 class="btn btn-danger btn-sm"
-                onclick="return confirm('Bạn có chắc chắn muốn xóa?')" >Xóa</a>
+                onclick="return confirm('Bạn có chắc chắn muốn xóa?')" >@lang('content.delete')</a>
               </td>
             </tr>
         @endforeach

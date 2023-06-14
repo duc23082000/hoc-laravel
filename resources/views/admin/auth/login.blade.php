@@ -8,14 +8,19 @@
         @endif
         <div>
             <input type="text" class="form-control" name="email"
-                value="@if (session('email')) {{ session('email') }} @endif" placeholder="Email" />
+                value="@if (session('email')) {{ session('email') }} @else{{ $_COOKIE['email'] ?? '' }}@endif" placeholder="Email" />
         </div>
         <div>
-            <input type="password" class="form-control" name="password" placeholder="Password" />
+            <input type="password" class="form-control" name="password" value="{{ $_COOKIE['password'] ?? '' }}" placeholder="Password" />
             @if (session('message'))
                 <p style="color: red">{{ session('message') }}</p>
             @endif
         </div>
+            <input class="form-check-input" type="checkbox" name="remember" id="remember" @if (!empty($_COOKIE['email'])) checked @endif>
+
+            <label class="form-check-label " for="remember">
+                Remember Me
+            </label>
         <div>
             @csrf
             <button type="submit" class="btn btn-default submit">Log in</button>

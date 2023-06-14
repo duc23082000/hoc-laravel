@@ -2,62 +2,84 @@
 
 namespace App\Imports;
 
+use App\Models\Category;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use App\Models\Course;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use App\Http\Requests\ExcelRequest;
+use App\Models\ImportNotice;
+use Illuminate\Support\Facades\Log;
 
 class ImportExcel implements ToCollection, WithHeadingRow
 {
     /**
     * @param Collection $collection
     */
+    private $id;
+    private $fileName;
+    public function __construct($id, $fileName)
+    {
+        $this->id = $id;
+        $this->fileName = $fileName;
+    }
     public function collection(Collection $rows)
     {
-        $a = [];
+        $a = '';
         $data = [];
+
+        $create = new ImportNotice;
+        $create->name = $this->fileName;
+        $create->user_id = $this->id;
+        Log::info($this->id);
+        
+        if(array_keys($rows->toArray()[0]) != ['course_name', 'price', 'category_id', 'description', 'status']){
+            $create->status = 1;
+            $create->notification = 'File excel phải có 5 cột và sắp xếp theo đúng thứ tự course_name, price, category_id, description, status';
+            return $create->save();
+        }
+
+        $categoryId = Category::pluck('id')->toArray();
+        
         foreach ($rows as $key => $row) {
-            // dd($row);
-            // dd($row['course_name']);
-            $validator = Validator::make($row->toArray(), [
-                'course_name' => 'required|string|max:255',
-                'price' => 'required|integer|min:0',
-                'category_id' => 'required|integer|exists:categories,id,deleted_at,NULL'
-            ], [
-                'course_name.required' => 'Tên Khóa học không được để trống (A'. $key+2 .')',
-                'course_name.string' => 'Tên Khóa học phải là kiểu chuỗi (A'. $key+2 .'(' .$row['course_name'].'))',
-                'course_name.max' => 'Tên Khóa học chỉ được phép tối đa 255 kí tự (A'. $key+2 .'(' .$row['course_name'].'))',
-                'price.required' => 'Giá không được để trống (B'. $key+2 .')',
-                'price.integer' => 'Giá phải là số nguyên (B'. $key+2 .'(' .$row['price'].'))',
-                'price.min' => 'Giá phải lớn hơn hoặc bằng 0 (B'. $key+2 .'(' .$row['price'].'))',
-                'category_id.required' => 'Category id không được để trống (C'. $key+2 .')',
-                'category_id.integer' => 'Category id phải là số nguyên (C'. $key+2 .'(' .$row['category_id'].'))',
-                'category_id.exists' => 'Category id phải được đăng kí trong bảng categories (C'. $key+2 .'(' .$row['category_id'].'))',
-            ]);
-            // dd($validator);
+            
+
+            $validate =  new ExcelRequest($categoryId, $key, $row);
+            $validator = Validator::make($row->toArray(), $validate->rules(), $validate->messages());
+
             if($validator->fails()){
-                // dd($validator->errors()->messages());
-                $error = $validator->messages()->all();
-                $a[] = $error;
+                $errors = $validator->messages()->all();
+                $string = join("<br>", $errors);
+                // Log::info($string);
+                $a .= $string.'<br>';
+                Log::info($a);
             }
             $data[] = [
                 'course_name' => $row['course_name'],
                 'price' => $row['price'],
                 'description' => $row['description'],
                 'category_id' => $row['category_id'],
-                'created_by_id' => Auth::user()->id,
-                'modified_by_id' => Auth::user()->id,
+                'status' => $row['status'],
+                'created_by_id' => $this->id,
+                'modified_by_id' => $this->id,
                 'created_at' =>now(),
                 'updated_at' =>now()
             ];
         }
-        if (!empty($a)) {          
-            return back()->with('datas', $a)->with('name', 'import.form');
-        } 
 
-        Course::insert($data);
-        return back()->with('name', 'courses.list');
+        $create->notification = $a;
+
+        if (empty($a)) {          
+            Course::insert($data);
+            $create->status = 0;
+            return $create->save();
+        }
+
+        $create->status = 1;
+        return $create->save();
+
+    
     }
 }

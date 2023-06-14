@@ -38,7 +38,7 @@ class LostPasswordController extends Controller
         Password::sendResetLink(
             $request->only('email')
         );
-        return back()->with(['message2' => 'Gửi yêu cầu thành công! Vui lòng kiểm tra mail để đổ mật khẩu', 'email' => $email]);
+        return back()->with(['message2' => 'Gửi yêu cầu thành công! Vui lòng kiểm tra mail để đổi mật khẩu', 'email' => $email]);
     }
 
     // form đổi mk 

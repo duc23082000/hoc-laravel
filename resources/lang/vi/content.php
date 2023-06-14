@@ -1,0 +1,30 @@
+<?php
+return [
+    'search' => 'Tìm kiếm',
+    'add' => 'Thêm',
+    'name' => 'Tên',
+    'order' => 'Số lượng',
+    'createdAt' => 'Ngày tạo',
+    'modifiedAt' => 'Ngày sửa',
+    'edit' => 'Sửa',
+    'delete' => 'Xóa',
+    'back' => 'Thoát',
+    'export' => 'Xuất ra file Excel',
+    'import' => 'Nhập từ file Excel',
+    'price' => 'Giá',
+    'type' => 'Kiểu',
+    'category' => 'Loại',
+    'status' => 'Trạng thái',
+    'createdBy' => 'Tạo bởi',
+    'modifiedBy' => 'Sửa bởi',
+    'description' => 'Miêu tả',
+    'image' => 'Ảnh',
+    'course' => 'Khóa học',
+    'courseStatus' => [
+        'SAP_TOI'  => 'Sắp tới',
+        'DANG_HOC' => 'Đang học',
+        'HOAN_THANH' => 'Hoàn thành',
+    ],
+    'lesson' => 'Bài học',
+
+];
