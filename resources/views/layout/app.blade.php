@@ -9,7 +9,7 @@
 	<link rel="icon" href="images/favicon.ico" type="image/ico" />
 
     <title>Gentelella Alela!</title>
-
+    
     <!-- Bootstrap -->
     <link href="{{ asset('assets/bootstrap/dist/css/bootstrap.min.css') }}" rel="stylesheet">
     <!-- Font Awesome -->
@@ -36,7 +36,7 @@
           <div class="col-md-3 left_col">
             <div class="left_col scroll-view">
               <div class="navbar nav_title" style="border: 0;">
-                <a href="index.html" class="site_title"><i class="fa fa-paw"></i> <span>Gentelella Alela!</span></a>
+                <a href="{{ route('home') }}" class="site_title"><i class="fa fa-paw"></i> <span>@lang('layout.title')</span></a>
               </div>
         
               {{-- sidebar start --}}

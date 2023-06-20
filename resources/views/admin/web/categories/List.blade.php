@@ -27,11 +27,11 @@
   <form action="" method="GET">
       <input class="form-control mr-sm-2 input" type="search" 
       name="search" value="{{ $search }}"
-      placeholder="Search" aria-label="Search">
-      <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+      placeholder="@lang('content.search')" aria-label="Search">
+      <button class="btn btn-outline-success my-2 my-sm-0" type="submit">@lang('content.search')</button>
   </form>
 
-  <a href="{{ route('categories.add') }}" class="btn btn-outline-success">Thêm</a>
+  <a href="{{ route('categories.add') }}" class="btn btn-outline-success">@lang('content.add')</a>
   
   @if (session('message'))
       <p class="alert alert-primary" style="text-align: center">{{ session('message') }}</p>
@@ -53,7 +53,7 @@
           </th>
           <th scope="col">
             <form action="" method="get">
-              Name
+              @lang('content.name')
               <input type="hidden" name="sort" value="name">
               <input type="hidden" name="order" value="{{ $order ?? 'asc' }}">
               <input type="hidden" name="search" value="{{ $search }}">
@@ -62,8 +62,8 @@
           </th>
           <th scope="col">
             <form action="" method="get">
-              Order
-              <input type="hidden" name="sort" value="order">
+              @lang('content.order')
+              <input type="hidden" name="sort" value="orders">
               <input type="hidden" name="order" value="{{ $order ?? 'asc' }}">
               <input type="hidden" name="search" value="{{ $search }}">
               <button class="button-sorf"><i class="fa fa-sort" aria-hidden="true"></i></button>
@@ -71,7 +71,7 @@
           </th>
           <th scope="col">
             <form action="" method="get">
-              Created at
+              @lang('content.createdAt')
               <input type="hidden" name="sort" value="created_at">
               <input type="hidden" name="order" value="{{ $order ?? 'asc' }}">
               <input type="hidden" name="search" value="{{ $search }}">
@@ -80,7 +80,7 @@
           </th>
           <th scope="col">
             <form action="" method="get">
-              Modified at
+              @lang('content.modifiedAt')
               <input type="hidden" name="sort" value="updated_at">
               <input type="hidden" name="order" value="{{ $order ?? 'asc' }}">
               <input type="hidden" name="search" value="{{ $search }}">
@@ -95,15 +95,15 @@
             <tr>
               <td>{{ $item->id }}</td>
               <td>{{ $item->name }}</td>
-              <td>{{ $item->order }}</td>
+              <td>{{ $item->orders }}</td>
               <td>{{ $item->created_at }}</td>
               <td>{{ $item->updated_at }}</td>
               <td>
                 <a href="{{ route('categories.edit', ['id'=>$item['id']]) }}"
-                class="btn btn-warning btn-sm">Sửa</a>
+                class="btn btn-warning btn-sm">@lang('content.edit')</a>
                 <a href="{{ route('categories.delete', ['id'=>$item['id']]) }}"
                 class="btn btn-danger btn-sm"
-                onclick="return confirm('Bạn có chắc chắn muốn xóa?')" >Xóa</a>
+                onclick="return confirm('Bạn có chắc chắn muốn xóa?')" >@lang('content.delete')</a>
               </td>
             </tr>
         @endforeach

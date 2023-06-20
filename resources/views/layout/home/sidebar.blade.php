@@ -4,7 +4,7 @@
       <img src="{{ asset('images/user.png') }}" alt="..." class="img-circle profile_img">
     </div>
     <div class="profile_info">
-      <span>Welcome,</span>
+      <span>@lang('layout.welcome')</span>
       <h2>{{ substr_replace(Auth::user()->email, '
         ', 17, 0); }}</h2>
     </div>
@@ -18,21 +18,30 @@
     <div class="menu_section">
       <h3>General</h3>
       <ul class="nav side-menu">
-        <li><a><i class="fa fa-home"></i> Home <span class="fa fa-chevron-down"></span></a>
+        <li><a><i class="fa fa-home"></i> @lang('layout.home') <span class="fa fa-chevron-down"></span></a>
           <ul class="nav child_menu">
-            <li><a href="{{ route('home') }}">Dashboard</a></li>
+            <li><a href="{{ route('home') }}">@lang('layout.dashboard')</a></li>
           </ul>
         </li>
-        <li><a><i class="fa fa-table"></i> Categories <span class="fa fa-chevron-down"></span></a>
+        <li><a><i class="fa fa-table"></i> @lang('layout.categories') <span class="fa fa-chevron-down"></span></a>
           <ul class="nav child_menu">
-            <li><a href="{{ route('categories.list') }}">Lists</a></li>
+            <li><a href="{{ route('categories.list') }}">@lang('layout.lists')</a></li>
           </ul>
         </li>
-        <li><a><i class="fa fa-clone"></i>Courses <span class="fa fa-chevron-down"></span></a>
+        <li><a><i class="fa fa-clone"></i>@lang('layout.courses') <span class="fa fa-chevron-down"></span></a>
           <ul class="nav child_menu">
-            <li><a href="{{ route('courses.list') }}">Lists</a></li>
+            <li><a href="{{ route('courses.list') }}">@lang('layout.lists')</a></li>
           </ul>
         </li>
+
+        <li><a><i class="fa fa-sitemap"></i>{{ __('layout.lesson') }}<span class="fa fa-chevron-down"></span></a>
+          <ul class="nav child_menu">
+              <li>
+                <a href="{{ route('lesson.list') }}">{{ __('layout.lists') }}</a>
+              </li>
+          </ul>
+        </li>
+
       </ul>
     </div>
     

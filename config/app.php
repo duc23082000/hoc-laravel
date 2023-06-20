@@ -54,7 +54,8 @@ return [
     |
     */
 
-    'url' => env('APP_URL', 'http://localhost'),
+    'url' => env('APP_URL', 'http://localhost:8000'),
+    'root_domain' => 'http://127.0.0.1:8000',
 
     'asset_url' => env('ASSET_URL'),
 
@@ -184,6 +185,7 @@ return [
 
         Maatwebsite\Excel\ExcelServiceProvider::class,
         Barryvdh\Debugbar\ServiceProvider::class,
+        Laravel\Socialite\SocialiteServiceProvider::class,
 
 
 
@@ -219,6 +221,7 @@ return [
         // 'ExampleClass' => App\Example\ExampleClass::class,
         
         'Excel' => Maatwebsite\Excel\Facades\Excel::class,
+        'Socialite' => Laravel\Socialite\Facades\Socialite::class,
     ])->toArray(),
 
 ];

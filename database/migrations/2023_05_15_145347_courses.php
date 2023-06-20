@@ -19,6 +19,7 @@ return new class extends Migration
             $table->unsignedFloat('price');
             $table->text('description')->nullable();
             $table->unsignedBigInteger('category_id'); //Trường khóa ngoại
+            $table->smallInteger('status')->index();
             $table->string('image', 255)->nullable();
             $table->unsignedBigInteger('created_by_id'); //Trường khóa ngoại
             $table->unsignedBigInteger('modified_by_id'); //Trường khóa ngoại

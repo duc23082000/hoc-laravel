@@ -24,14 +24,20 @@
     <div class="border box-show">
         <div class="content">
             @if (!empty($data->image))
-                <img src="{{ asset('storage/images/' . $data->image) }}" alt="Ảnh">
+                <img src="{{ asset('storage/images/' . $data->image) }}" alt="@lang('content.image')">
             @endif
-            <h1>Course: {{ $data->course_name }}</h1>
-            <p>Category: {{ $data->category->name }}</p>
-            <p>Price: {{ $data->price }}$</p>
-            <p>Created by: {{ $data->user_create->email }} - <span>{{ $data->created_at }}</span></p>
-            <p>Modified by: {{ $data->user_update->email }} - <span>{{ $data->updated_at }}</span></p>
-            <p>Description: @php echo $data->description @endphp</p>
+            <h1>@lang('content.course'): {{ $data->course_name }}</h1>
+            <p>@lang('content.category'): {{ $data->category->name }}</p>
+            <p>@lang('content.price'): {{ $data->price }}$</p>
+            <p>@lang('content.status'): {{ $data->status_name }}</p>
+            <p>@lang('content.createdBy'): {{ $data->user_create->email }} - <span>{{ $data->created_at }}</span></p>
+            <p>@lang('content.modifiedBy'): {{ $data->user_update->email }} - <span>{{ $data->updated_at }}</span></p>
+            <p>@lang('content.description'): @php echo $data->description @endphp</p>
+            <h3>@lang('content.lesson'):</h3>
+            @foreach ($data->lessons as $key => $item)
+                <p>{{ $key +1 }}: {{ $item->lesson_name }}</p>
+            @endforeach
+
         </div>
     </div>
 </div>
