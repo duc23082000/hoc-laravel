@@ -22,14 +22,12 @@ class CoursesExport implements FromCollection, WithHeadings, WithEvents
     private $search;
     private $collum;
     private $order;
-    private $case;
 
-    public function __construct($search, $collum, $order, $case)
+    public function __construct($search, $collum, $order)
     {
         $this->search = $search;
         $this->collum = $collum;
         $this->order = $order;
-        $this->case = $case;
     }
 
     public function collection()
@@ -38,7 +36,6 @@ class CoursesExport implements FromCollection, WithHeadings, WithEvents
         $collum = $this->collum;
         // dd($collum);
         $order = $this->order;
-        $case = $this->case;
         // dd($order);
 
         $joinResult = Course::join('categories', 'courses.category_id', '=', 'categories.id')

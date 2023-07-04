@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Routing\RouteGroup;
 use App\Http\Controllers\Auth\SettingController;
 
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -130,6 +131,12 @@ Route::prefix('admin')->middleware(['auth', 'localization'])->group(function () 
             Route::get('edit/{id}', [LessonController::class, 'formEdit'])->name('lesson.edit');
 
             Route::put('edit/{id}', [LessonController::class, 'updateData'])->name('lesson.update');
+
+            Route::post('export', [LessonController::class, 'export'])->name('export.lesson');
+
+            Route::get('import', [LessonController::class, 'importForm'])->name('import.form.lesson');
+
+            Route::post('import', [LessonController::class, 'import'])->name('import.lesson');
         });
     });
     

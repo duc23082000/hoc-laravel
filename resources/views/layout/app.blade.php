@@ -25,6 +25,16 @@
     <link href="{{ asset('assets/jqvmap/dist/jqvmap.min.css') }}" rel="stylesheet"/>
     <!-- bootstrap-daterangepicker -->
     <link href="{{ asset('assets/bootstrap-daterangepicker/daterangepicker.css') }}" rel="stylesheet">
+    <!-- bootstrap-wysiwyg -->
+    <link href="{{ asset('assets/google-code-prettify/bin/prettify.min.css') }}" rel="stylesheet">
+    <!-- Select2 -->
+    <link href="{{ asset('assets/select2/dist/css/select2.min.css') }}" rel="stylesheet">
+    <!-- Switchery -->
+    <link href="{{ asset('assets/switchery/dist/switchery.min.css') }}" rel="stylesheet">
+    <!-- starrr -->
+    <link href="{{ asset('assets/starrr/dist/starrr.css') }}" rel="stylesheet">
+    <!-- bootstrap-daterangepicker -->
+    <link href="{{ asset('assets/bootstrap-daterangepicker/daterangepicker.css') }}" rel="stylesheet">
 
     <!-- Custom Theme Style -->
     <link href="{{ asset('build/css/custom.min.css') }}" rel="stylesheet">
@@ -45,15 +55,15 @@
 
               {{-- header start  --}}
               @include('layout.home.header')
-              {{-- header start  --}}
+              {{-- header end  --}}
 
               {{-- content start  --}}
               @yield('content')
-              {{-- content start  --}}
+              {{-- content end  --}}
 
               {{-- footer start  --}}
               @include('layout.home.footer')
-              {{-- footer start  --}}
+              {{-- footer end  --}}
 
             </div>
           </div>
@@ -100,6 +110,8 @@
 
     <!-- Custom Theme Scripts -->
     <script src="{{ asset('build/js/custom.min.js') }}"></script>
+    <!-- jQuery Tags Input -->
+	<script src="{{ asset('assets/jquery.tagsinput/src/jquery.tagsinput.js') }}"></script>
 
     </body>
     </html>

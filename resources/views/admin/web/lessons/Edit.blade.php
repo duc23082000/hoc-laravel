@@ -18,16 +18,26 @@
         <div class="form-floating" style="width: 30%;">
             <select class="form-select" aria-label="Floating label select example"
                     id="floatingSelect" name="course">
-              <option selected value="{{ $lesson->course->id }}">{{ $lesson->course->course_name }}</option>
-            
+                                
               @foreach ($courselist as $item)
-                <option value="{{ $item->id }}">{{ $item->course_name }}</option>
+                <option value="{{ $item->id }}" @if($item->id == old('course') ?? $lesson->course->id) selected @endif>{{ $item->course_name }}</option>
               @endforeach
 
             </select>
             <label for="floatingSelect">@lang('content.course'):</label>
         </div>
         @error('course')
+            <p style="color: red">{{ $message }}</p>
+        @enderror
+
+        {{-- Trạng thái lesson --}}
+        <div>
+            {{ __('content.status') }}:
+            @foreach ($enum as $key => $value)
+            <input class="form-check-input" type="radio" name="status" value="{{ $value }}" @if($value == (old('status') ?? $lesson->status) || $value == 0)checked @endif > {{ __('content.lessonStatus.' .$key) }}
+            @endforeach
+        </div>
+        @error('status')
             <p style="color: red">{{ $message }}</p>
         @enderror
 
@@ -46,8 +56,8 @@
 
         @csrf
         @method('PUT')
-        <button type="submit" class="btn btn-primary">@lang('content.add')</button>
-        <a href="{{ route('courses.list') }}" class="btn btn-secondary">@lang('content.back')</a>
+        <button type="submit" class="btn btn-primary">@lang('content.edit')</button>
+        <a href="{{ route('lesson.list') }}" class="btn btn-secondary">@lang('content.back')</a>
     </form>
 </div>
 @endsection

@@ -20,6 +20,7 @@ class CategoryController extends Controller
         // dd($search);
         $collum = $request->sort;
 
+
         $order = $request->order;
         // dd($request->url());
         // dd($order);

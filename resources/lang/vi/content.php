@@ -26,5 +26,8 @@ return [
         'HOAN_THANH' => 'Hoàn thành',
     ],
     'lesson' => 'Bài học',
-
+    'lessonStatus' => [
+        'Public'  => 'Công khai',
+        'Private' => 'Riêng tư',
+    ],
 ];

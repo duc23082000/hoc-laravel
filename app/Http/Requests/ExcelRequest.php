@@ -35,7 +35,6 @@ class ExcelRequest
 
     public function messages()
     {
-        $categoryId = $this->categoryId;
         $key = $this->key;
         $row = $this->row;
         return [
@@ -55,3 +54,4 @@ class ExcelRequest
     }
 
 }
+

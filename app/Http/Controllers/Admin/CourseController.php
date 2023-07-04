@@ -103,9 +103,7 @@ class CourseController extends Controller
 
     public function show($id){
         // Lấy ra dữ liệu khóa học
-        $data = Cache::remember('dataShow'.$id, now()->addMinutes(10), function() use ($id){
-            return Course::with(['user_update', 'user_create', 'category', 'lessons'])->find($id);
-        });
+        $data = Course::with(['user_update', 'user_create', 'category', 'lessons'])->find($id);
         // dd($data->lessons);
         // dd(CourseStatusEnum::getKey(1));
 
@@ -247,26 +245,24 @@ class CourseController extends Controller
     public function export(ListRequest $request){
         // dd($request->sort);
         
-        return Excel::download(new CoursesExport($request->search, $request->sort, $request->order, $request->case), 'courses.xlsx');
+        return Excel::download(new CoursesExport($request->search, $request->sort, $request->order), 'courses.xlsx');
     }
 
     public function importForm(){
-        // Log::info('haha');
-        $notication = ImportNotice::where('user_id', Auth::user()->id)->get();
-        // dd($notication[0]->status_name);
+        $notication = ImportNotice::where('user_id', Auth::user()->id)
+        ->orderBy('id', 'desc')
+        ->get();
         return view('admin.web.courses.import', compact('notication'));
     }
 
     public function import(ImportRequest $request) {
         $files = $request->excel;
-        // dd($files);
-        // 
+
         foreach($files as $file){
             $file->storeAs('excels', $file->getClientOriginalName(), 'public');
         }
-        ImportQueue::dispatch(Auth::user()->id);
+        ImportQueue::dispatch(Auth::user()->id, $request->url());
         
-        // dd($a);
         Cache::forget('joinResult');
 
         return back()->with(['message'=>'Import thành công.']);

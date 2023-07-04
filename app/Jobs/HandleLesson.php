@@ -29,8 +29,9 @@ class HandleLesson implements ShouldQueue
     private $user_id;
     private $fileName;
     private $url;
+    private $status;
 
-    public function __construct($id, $name, $course_id, $content, $user_id, $fileName, $url)
+    public function __construct($id, $name, $course_id, $content, $user_id, $fileName, $url, $status)
     {
         $this->id = $id;
         $this->name = $name;
@@ -39,6 +40,7 @@ class HandleLesson implements ShouldQueue
         $this->user_id = $user_id;
         $this->fileName = $fileName;
         $this->url = $url;
+        $this->status = $status;
     }
 
     /**
@@ -53,11 +55,10 @@ class HandleLesson implements ShouldQueue
             $lesson = new Lesson();
             $lesson->lesson_name = $this->name;
             $lesson->course_id = $this->course_id;
-            // $lesson->status = $this->status;
+            $lesson->status = $this->status;
             $lesson->content = $this->content;
             $lesson->created_by_id = $this->user_id;
             $lesson->modified_by_id = $this->user_id;
-
 
             // kiểm tra xem người dùng có gửi video hay ko nếu có thì thêm ảnh ngược lại ảnh sẽ là null 
             if (!$this->fileName) {
@@ -66,19 +67,17 @@ class HandleLesson implements ShouldQueue
             }
 
             $lesson->video = $this->fileName;
-            // Log::info($lesson->video);
-            $lesson->save();
-            Log::info($lesson->save());
+            Log::info($lesson->video);
+            return $lesson->save();
         }
 
         $lesson = Lesson::find($this->id);
         $lesson->lesson_name = $this->name;
         $lesson->course_id = $this->course_id;
-        // $lesson->status = $this->status;
+        $lesson->status = $this->status;
         $lesson->content = $this->content;
         $lesson->created_by_id = $this->user_id;
         $lesson->modified_by_id = $this->user_id;
-
 
         // kiểm tra xem người dùng có gửi video hay ko nếu có thì thêm ảnh ngược lại ảnh sẽ là null 
         if (!$this->fileName) {
@@ -89,8 +88,6 @@ class HandleLesson implements ShouldQueue
         $lesson->video = $this->fileName;
         // Log::info($lesson->video);
         $lesson->save();
-        Log::info($lesson->save());
-
-        
+        return Log::info($lesson->save());
     }
 }

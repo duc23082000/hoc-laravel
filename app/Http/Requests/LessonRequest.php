@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\LessonStatusEnum;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class LessonRequest extends FormRequest
 {
@@ -25,14 +27,14 @@ class LessonRequest extends FormRequest
     {
         $rules = [
             'name' => 'required|string|max:255',
-            'course' => 'required|exists:courses,id,deleted_at,NULL',
-            // 'status' => ['required', Rule::in(CourseStatusEnum::asArray())] 
+            'course' => 'required|exists:courses,id,deleted_at,NULL', 
+            'status' => ['required', Rule::in(LessonStatusEnum::asArray())] 
         ]; 
         // dd($rules);
-        // if ($this->file('video')) {
-        //     // dd(1);
-        //     $rules['video'] = 'mimes:mp4,avi,wmv';
-        // }
+        if ($this->file('video')) {
+            // dd(1);
+            $rules['video'] = 'mimes:mp4,avi,wmv';
+        }
         return $rules;
     }
 

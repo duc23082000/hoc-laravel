@@ -26,6 +26,9 @@ return [
         'HOAN_THANH' => 'Completed',
     ],
     'lesson' => 'Lesson',
-
+    'lessonStatus' => [
+        'Public'  => 'Public',
+        'Private' => 'Private',
+    ],
 
 ];

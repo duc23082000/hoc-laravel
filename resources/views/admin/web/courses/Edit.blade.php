@@ -56,7 +56,7 @@
         <div>
             @lang('content.status'):
             @foreach ($arrayCourseStatus as $key => $value)
-            <input class="form-check-input" type="radio" name="status" value="{{ $value }}" @if($value == (old('status') ?? $course->status))checked @endif > @lang('content.courseStatus.' .$key)
+            <input class="form-check-input" type="radio" name="status" value="{{ $value }}" @if($value == (old('status') ?? $course->status) || $value == 0)checked @endif > @lang('content.courseStatus.' .$key)
             @endforeach
         </div>
         @error('status')
