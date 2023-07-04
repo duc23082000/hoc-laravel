@@ -20,7 +20,6 @@ class Course extends Model
 
     public function category() {
         return $this->belongsTo(Category::class, 'category_id', 'id')->select('id', 'name');
-        
     }
 
     public function user_create() {
@@ -39,5 +38,19 @@ class Course extends Model
     {
         return $this->price == 0 ? 'Miễn phí' : 'Trả phí';
     }
+
+    public function getStatusNameAttribute()
+    {
+        if($this->status == 0){
+            return 'Sắp tới';
+        }
+        if($this->status == 1){
+            return 'Đang học';
+        }
+        if($this->status == 2){
+            return 'Hoàn thành';
+        }
+    }
+    
 
 }

@@ -26,7 +26,7 @@ class CategoryRequest extends FormRequest
     {
         // dd($this->input('id'));
         return [
-            'name' => 'required|unique:categories,name,'. $this->input('id') .',id',
+            'name' => 'required|unique:categories,name,'. $this->input('id') .',id,deleted_at,NULL',
             'order' => 'required|integer|gt:0'
         ];
     }

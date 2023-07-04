@@ -33,7 +33,7 @@ class ImportExcel implements ToCollection, WithHeadingRow
         $create = new ImportNotice;
         $create->name = $this->fileName;
         $create->user_id = $this->id;
-        Log::info($this->id);
+        Log::info($rows->toArray());
         
         if(array_keys($rows->toArray()[0]) != ['course_name', 'price', 'category_id', 'description', 'status']){
             $create->status = 1;
@@ -45,7 +45,7 @@ class ImportExcel implements ToCollection, WithHeadingRow
         
         foreach ($rows as $key => $row) {
             
-
+            Log::info($row);
             $validate =  new ExcelRequest($categoryId, $key, $row);
             $validator = Validator::make($row->toArray(), $validate->rules(), $validate->messages());
 

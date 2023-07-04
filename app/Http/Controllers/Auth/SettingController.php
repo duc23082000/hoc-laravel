@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Cache;
 class SettingController extends Controller
 {
     public function index(){
+        
         return view('admin.auth.setting');
     }
 

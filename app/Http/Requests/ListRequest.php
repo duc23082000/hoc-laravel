@@ -33,7 +33,7 @@ class ListRequest extends FormRequest
                 $rules['sort'] = 'in:id,name,orders,created_at,updated_at';
             }
             if($this->url() == 'http://127.0.0.1:8000/admin/lesson/list'){
-                $rules['sort'] = 'in:lessons.id,lessons.lesson_name,courses.course_name,lessons.created_at,lessons.updated_at,users.email,email2';
+                $rules['sort'] = 'in:lessons.id,lessons.lesson_name,courses.course_name,lessons.created_at,lessons.updated_at,users.email,email2,lessons.status';
             }
         }
         if($this->input('order')){
